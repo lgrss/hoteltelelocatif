@@ -23,7 +23,7 @@ public class C_BDD {
     private     String url;
     private     String user;
     private     String password;
-    private     String BDD;
+    //private     String BDDname;
     private     Connection connection;
     
     /* Variable qui récupère les exceptions, se met a jour a chaque

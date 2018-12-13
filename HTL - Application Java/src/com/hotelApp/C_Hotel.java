@@ -24,6 +24,7 @@ public class C_Hotel {
     private String CP;
     private String NumTel;
     private ArrayList Services;
+    private int Id;
 
     private String errno;
 
@@ -51,6 +52,7 @@ public class C_Hotel {
         this.Ville = getVille(nomHotel, handler);
         this.CP = getCP(nomHotel, handler);
         this.NumTel = getNumTel(nomHotel, handler);
+        this.Id = getId(nomHotel, handler);
     }
 
     /**
@@ -78,8 +80,9 @@ public class C_Hotel {
 
     /**
      * Met à jour l'hôtel dans la base de donnée
+     *
      * @param handler Handler MYSQL
-     * @return nbr de champs modifiés si réussite, -1 si erreur, 0 si aucun 
+     * @return nbr de champs modifiés si réussite, -1 si erreur, 0 si aucun
      * champs n'était à modifier
      */
     public int MettreAJour(String newNom,
@@ -91,27 +94,26 @@ public class C_Hotel {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "SELECT * FROM `t_hotel` WHERE `nom` = '"
-                    +this.getNom()+"'";
+                    + this.getNom() + "'";
             ResultSet resultat = statement.executeQuery(requete);
-            
-            while (resultat.next())
-            {
-                if (!newNom.equals(resultat.getString(2)) 
+
+            while (resultat.next()) {
+                if (!newNom.equals(resultat.getString(2))
                         || !newAdresse.equals(resultat.getString(3))
                         || !newCp.equals(resultat.getString(4))
                         || !newVille.equals(resultat.getString(5))
-                        || !newNumTel.equals(resultat.getString(6)))
-                {
-                    requete = "UPDATE `t_hotel` SET `nom`='"+newNom+"',"
-                            + "`adresse`='"+newAdresse+"',"
-                            + "`cp`='"+newCp+"',"
-                            + "`ville`='"+newVille+"',"
-                            + "`tel`='"+newNumTel+"'"
-                            + "WHERE `nom`='"+this.getNom()+"'";
-                    
+                        || !newNumTel.equals(resultat.getString(6))) {
+                    requete = "UPDATE `t_hotel` SET `nom`='" + newNom + "',"
+                            + "`adresse`='" + newAdresse + "',"
+                            + "`cp`='" + newCp + "',"
+                            + "`ville`='" + newVille + "',"
+                            + "`tel`='" + newNumTel + "'"
+                            + "WHERE `nom`='" + this.getNom() + "'";
+
                     return statement.executeUpdate(requete);
+                } else {
+                    return 0;
                 }
-                else return 0;
             }
             return 0;
         } catch (SQLException ex) {
@@ -154,6 +156,7 @@ public class C_Hotel {
 
     /**
      * Supprime l'hôtel demandé de la base de données
+     *
      * @param hotel Nom de l'hôtel
      * @param handler Handler MYSQL
      * @return 1 si l'hôtel a été supprimé, -1 si non
@@ -162,7 +165,7 @@ public class C_Hotel {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "DELETE FROM `hotel`.`t_hotel` WHERE `t_hotel`.`nom` = "
-                    +"'"+hotel+"'";
+                    + "'" + hotel + "'";
             int resultat = statement.executeUpdate(requete);
             return resultat;
         } catch (SQLException ex) {
@@ -370,6 +373,38 @@ public class C_Hotel {
      */
     public String getVille() {
         return Ville;
+    }
+
+    /**
+     * Renvoie l'id de l'hôtel
+     *
+     * @return Id - id de l'hôtel dans la base de données
+     */
+    public int getId() {
+        return Id;
+    }
+
+    /**
+     * Renvoie l'id de l'hôtel selon le nom donné
+     *
+     * @param nomHotel - Nom de l'hôtel
+     * @param handler - Handler MySQL
+     * @return ID de l'hôtel si succès / -1 si erreur
+     */
+    public int getId(String nomHotel, C_BDD handler) {
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "SELECT `id_hotel` FROM `t_hotel` WHERE `nom`="
+                    + "'" + nomHotel + "'";
+            ResultSet resultat = statement.executeQuery(requete);
+            resultat.first();
+
+            return resultat.getInt(1);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(C_Hotel.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
 
     /**
