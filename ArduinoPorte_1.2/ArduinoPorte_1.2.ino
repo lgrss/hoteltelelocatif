@@ -52,7 +52,7 @@
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+TouchScreen ts(XP, YP, XM, YM, 300);
 
 EthernetClient client;
 
@@ -73,16 +73,23 @@ struct Case
 };
 Case numPad[12];
 
-boolean erreur = true;
-
-int erreurTotale = 0;
-String newMDP  = "_ _ _ _";
-String code    = "_ _ _ _";
-String MDP     = "       ";
+int compteurTimeOut;
+int timeOutMax;
+boolean blocageEnCours;
+boolean erreur;
+int erreurTotale;
+String code;
 
 //---------------------------------------- SETUP ------------------------------------------ 
 
 void setup(void) {
+  //Initialise les variables
+  blocageEnCours = false;
+  timeOutMax = 10;
+  erreur = false;
+  erreurTotale = 0;
+  code = "_ _ _ _";
+  
   //Configure le port série
   Serial.begin(9600);
 
@@ -104,14 +111,13 @@ void setup(void) {
     Serial.println("failed to connect, trying again...");
   } 
   Serial.println("connected");
-
-  
 }
 
 //---------------------------------------- LOOP ------------------------------------------ 
 
 void loop()
 {
+  //Vérifie si le client est connecté
   if (!client.connected()) {
       Serial.println("disconnected");
       client.stop();
@@ -124,16 +130,23 @@ void loop()
       Serial.println("reconnected");
     }
 
+    //Demande l'état des erreurs
     envoyerRequete("E");
+    //Gère le Time Out en cas de cable déconnecté
+    compteurTimeOut++;
+    
     delay(100);
     
     //ANALYSE LES DONNEES RECUES
     if (client.available()){
+        compteurTimeOut = 0;
+      
         byte reponse = client.read();
         
         if (reponse == 80){
           erreur = true;
           afficherErreur("  PORTE BLOQUEE");
+          blocageEnCours=false;
         }
         else if (reponse == 82){
           erreur = true;
@@ -144,11 +157,26 @@ void loop()
           afficherErreur("PROBLEME SERVEUR");
         }
         else if (reponse == 86){
-          erreur = false;
-          erreurTotale = 0;
-          afficherNumPad();
-          while(!erreur) saisirCode();
+          if(!blocageEnCours)
+          {
+            erreur = false;
+            //Reset le nombre d'erreur
+            erreurTotale = 0;
+            //Affiche le clavier
+            afficherNumPad();
+            //Pret pour la saisie du code
+            while(!erreur) saisirCode();
+          }
+          else{
+            //Renvoit une requete pour le blocage de la porte
+            envoyerRequete("B");
+          }
         }
+    }
+
+    if (compteurTimeOut >= timeOutMax){
+      erreur = true;
+      afficherErreur("    TIME OUT");
     }
     
     delay(10000);
@@ -192,12 +220,17 @@ void saisirCode()
         {
           couleur = toucheNumero(i);
         }
+        //Si il n'y a pas d'erreur
         if (!erreur){
           //AFFICHE LE NOUVEAU CODE
           afficherCode(couleur);
-    
+          
           //EVITE D'APPUYER PLUSIEURS FOIS SUR LA MEME TOUCHE
           relacherBouton();
+        }
+        else{
+          //flush manuel
+          while (client.available()) client.read();
         }
       }
     }
@@ -215,8 +248,10 @@ int toucheValider()
   if(!code.equals("  FAUX ") && !code.equals("  BON  ") && code.charAt(6) != '_')
   {
     //Récupère le mot de passe
-    rechargerMDP();
+    String MDP(rechargerMDP());
+    if (MDP.equals("null")) return NOIR;
     
+    //Code bon
     if(MDP.equals(code))
     {
       code = "  BON  ";
@@ -224,17 +259,25 @@ int toucheValider()
       ouvrirPorte();
       return VERT;
     }
+    //code mauvais
     else
     {
       code = "  FAUX ";
       erreurTotale++;
+      //Si trop d'erreur (3)
       if (erreurTotale >= 3){
         erreur = true;
         afficherErreur("  PORTE BLOQUEE");
+        //Evoyer requete pour signaler le blocage de la porte à la BDD
         envoyerRequete("B");
+        blocageEnCours=true;
+        code = "_ _ _ _";
       }
       return ROUGE;
     }
+  }
+  else{
+    return NOIR;
   }
 }
 
@@ -245,7 +288,7 @@ int toucheNumero(int i)
   {
     if(code.charAt(a) == '_')
     {
-      code[a] = numPad[i].valeur;
+      code[a] = numPad[i].valeur; //Remplace la valeur
       break; //QUITTE LE FOR
     }
   }
@@ -307,15 +350,16 @@ void afficherCode(int couleur)
   tft.print(code);
 }
 
-void rechargerMDP()
+String rechargerMDP()
 {
-  boolean fini = false;
   int nbReponse = -1;
+  String MDP  = "_ _ _ _";
+  compteurTimeOut=0;
   
   //flush manuel
   while (client.available()) client.read();
   
-  while(!fini)
+  while(!erreur)
   {
     //VERIFIE QUE L'ARDUINO EST TOUJOURS CONNECTE
     if (!client.connected()) {
@@ -334,15 +378,17 @@ void rechargerMDP()
     //Si aucune réponse n'est en train d'être récupérer
     if(nbReponse < 0 || nbReponse >= 4)
     {
-      //Demander le code
-      Serial.println("renew Code");
+      //Demander le code*
       envoyerRequete("C");
+      //augmente le compteur
+      compteurTimeOut++;
     }
     
     delay(100);
       
     //ANALYSE LES DONNEES RECUES
     if (client.available()){
+      compteurTimeOut = 0;
       
       int reponse = client.read();
       
@@ -352,34 +398,35 @@ void rechargerMDP()
       else if (reponse == 80){
         erreur = true;
         afficherErreur("  PORTE BLOQUEE");
-        fini = true;
       }
       else if (reponse == 82){
         erreur = true;
         afficherErreur("PAS DE RESERVATION");
-        fini = true;
       }
       else if (reponse == 83){
         erreur = true;
         afficherErreur("PROBLEME SERVEUR");
-        fini = true;
       }
       else{
         if (nbReponse >= 0 && nbReponse < 4){
-          newMDP[nbReponse*2] = String(reponse)[0];
+          MDP[nbReponse*2] = String(reponse)[0];
           nbReponse++;
           if(nbReponse == 4) 
           {
-            MDP = newMDP;
-            Serial.println("Le mot de passe est : " + MDP);
-            fini = true;
+            return MDP;
           }
         }
       }
     }
+
+    if(compteurTimeOut >=10){
+      erreur = true;
+      afficherErreur("    TIME OUT");
+    }
+    
   }
-  //flush manuel
-  while (client.available()) client.read();
+  return String("null");
+  
 }
 
 void afficherErreur(String message)
