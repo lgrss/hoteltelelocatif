@@ -31,10 +31,9 @@ public class IHM_Principale extends javax.swing.JFrame {
      * Creates new form IHM_Principale
      */
     /* ATTRIBUTS */
-    String url = "jdbc:mysql://localhost:3306/hotel";
-    String user = "root";
-    //String user = "phpmyadmin";
-    String password = "";
+    String url;
+    String user;
+    String password;
     int nbTarifs;
     char tarifs[];
     C_BDD BDD;
@@ -49,11 +48,15 @@ public class IHM_Principale extends javax.swing.JFrame {
      */
     Boolean flagHotel, flagCreationHotel, flagCreationChambre;
 
-    JRadioButton RadioBoutonSdB[] = new JRadioButton[2];
-    JRadioButton RadioBoutonWC[] = new JRadioButton[2];
+    JRadioButton RadioBoutonSdB[];
+    JRadioButton RadioBoutonWC[];
 
     public IHM_Principale() {
         initComponents();
+
+        url = "jdbc:mysql://localhost:3306/hotel";
+        user = "root";
+        password = "";
 
         BDD = new C_BDD(url, user, password);
         flagHotel = true;
@@ -61,21 +64,14 @@ public class IHM_Principale extends javax.swing.JFrame {
         flagCreationChambre = false;
 
         /* Initialisation des tableaux de radio bouton */
+        RadioBoutonSdB = new JRadioButton[2];
+        RadioBoutonWC = new JRadioButton[2];
+
         RadioBoutonSdB[0] = radSdBOui;
         RadioBoutonSdB[1] = radSdBNon;
 
         RadioBoutonWC[0] = radWCOui;
         RadioBoutonWC[1] = radWCNon;
-
-        /* Initialisation liste tarifs */
-        nbTarifs = 6;
-        tarifs = new char[nbTarifs];
-        boxTarifs.removeAllItems();
-        for (int i = 0; i < nbTarifs; i++) {
-            /* 65 représente la lettre A en ASCII */
-            tarifs[i] = (char) (65 + i);
-            boxTarifs.addItem(Character.toString(tarifs[i]));
-        }
 
         /* Cacher les panels pour les gestion hôtels et chambres (ergonomie) */
         OngletHotelAjouter.setVisible(false);
@@ -94,6 +90,8 @@ public class IHM_Principale extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, BDD.getErrno(),
                     "Erreur SQL", JOptionPane.ERROR_MESSAGE);
         }
+
+        RemplirBoxTarifs(6);
 
     } // Fin IHM_Principale
 
@@ -153,7 +151,6 @@ public class IHM_Principale extends javax.swing.JFrame {
         lblLitsDoubles = new javax.swing.JLabel();
         txtLitsDoubles = new javax.swing.JTextField();
         lblCouchages = new javax.swing.JLabel();
-        txtCouchages = new javax.swing.JTextField();
         txtNumChambre = new javax.swing.JTextField();
         lblNumChambre = new javax.swing.JLabel();
         lblTarif = new javax.swing.JLabel();
@@ -166,6 +163,8 @@ public class IHM_Principale extends javax.swing.JFrame {
         txtAddrMac = new javax.swing.JTextField();
         radWCNon = new javax.swing.JRadioButton();
         radSdBNon = new javax.swing.JRadioButton();
+        jButton2 = new javax.swing.JButton();
+        lblNbCouchages = new javax.swing.JLabel();
         OngletReception = new javax.swing.JPanel();
         lblNumReservation = new javax.swing.JLabel();
         txtNumeroReservation = new javax.swing.JTextField();
@@ -539,6 +538,15 @@ public class IHM_Principale extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setText("jButton2");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        lblNbCouchages.setText("jLabel1");
+
         javax.swing.GroupLayout OngletChambreAjouterLayout = new javax.swing.GroupLayout(OngletChambreAjouter);
         OngletChambreAjouter.setLayout(OngletChambreAjouterLayout);
         OngletChambreAjouterLayout.setHorizontalGroup(
@@ -547,48 +555,56 @@ public class IHM_Principale extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
-                        .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblCouchages)
-                            .addComponent(lblLitsSimples)
-                            .addComponent(lblLitsDoubles)
-                            .addComponent(lblNumChambre))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtLitsSimples, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
-                                    .addComponent(txtLitsDoubles, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(31, 31, 31)
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtAddrMac, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
-                                    .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtCouchages, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtNumChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(172, 172, 172)
-                                    .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblSalleDeBains, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(lblWC, javax.swing.GroupLayout.Alignment.TRAILING))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(radSdBOui)
-                                        .addComponent(radWCOui))
-                                    .addGap(29, 29, 29)
-                                    .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(radSdBNon)
-                                        .addComponent(radWCNon))))))
-                    .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
                         .addComponent(lblTarif)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(boxTarifs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(310, Short.MAX_VALUE))
+                        .addComponent(boxTarifs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
+                        .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
+                                .addComponent(lblLitsSimples)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtLitsSimples, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
+                                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblLitsDoubles)
+                                    .addComponent(lblNumChambre))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtNumChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtLitsDoubles, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
+                                .addGap(172, 172, 172)
+                                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblSalleDeBains, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblWC, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(radSdBOui)
+                                    .addComponent(radWCOui))
+                                .addGap(29, 29, 29)
+                                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(radSdBNon)
+                                    .addComponent(radWCNon)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OngletChambreAjouterLayout.createSequentialGroup()
+                                .addGap(40, 40, 40)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtAddrMac, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OngletChambreAjouterLayout.createSequentialGroup()
+                        .addComponent(lblCouchages)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblNbCouchages)
+                        .addGap(359, 359, 359)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
                 .addGap(307, 307, 307)
                 .addComponent(btnValiderChambre)
                 .addGap(18, 18, 18)
                 .addComponent(btnAnnulerChambre)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton2)
+                .addGap(0, 254, Short.MAX_VALUE))
         );
         OngletChambreAjouterLayout.setVerticalGroup(
             OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -605,8 +621,9 @@ public class IHM_Principale extends javax.swing.JFrame {
                             .addComponent(txtNumChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblCouchages)
-                            .addComponent(txtCouchages, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lblLitsDoubles)
+                            .addComponent(txtLitsDoubles, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6))
                     .addGroup(OngletChambreAjouterLayout.createSequentialGroup()
                         .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(radSdBOui)
@@ -621,18 +638,19 @@ public class IHM_Principale extends javax.swing.JFrame {
                         .addComponent(radWCNon)))
                 .addGap(18, 18, 18)
                 .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblLitsDoubles)
-                    .addComponent(txtLitsDoubles, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(txtAddrMac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAddrMac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLitsSimples, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblLitsSimples))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCouchages)
+                    .addComponent(lblNbCouchages))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(OngletChambreAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnValiderChambre)
-                    .addComponent(btnAnnulerChambre))
+                    .addComponent(btnAnnulerChambre)
+                    .addComponent(jButton2))
                 .addGap(147, 147, 147))
         );
 
@@ -665,7 +683,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                             .addGroup(OngletChambresLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(OngletChambreAjouter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 96, Short.MAX_VALUE)))
+                        .addGap(0, 260, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         OngletChambresLayout.setVerticalGroup(
@@ -689,7 +707,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(OngletChambreAjouter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
 
         GestionnaireOnglet.addTab("Gestion chambres", OngletChambres);
@@ -954,6 +972,22 @@ public class IHM_Principale extends javax.swing.JFrame {
     }
 
     /**
+     * Remplit la box code tarif dans l'onglet chambre
+     *
+     * @param handler - Handler MySQL
+     */
+    private void RemplirBoxTarifs(int nbTarifs) {
+        /* Initialisation liste tarifs */
+        tarifs = new char[nbTarifs];
+        boxTarifs.removeAllItems();
+        for (int i = 0; i < nbTarifs; i++) {
+            /* 65 représente la lettre A en ASCII */
+            tarifs[i] = (char) (65 + i);
+            boxTarifs.addItem(Character.toString(tarifs[i]));
+        }
+    }
+
+    /**
      * Change un 'set' de radio bouton
      *
      * @param tableau le groupement de radio bouton, soit RadioBoutonSdB[]
@@ -997,7 +1031,7 @@ public class IHM_Principale extends javax.swing.JFrame {
         Chambre = new C_Chambre(numeroChambre, BDD);
         boxTarifs.addItem(Character.toString(Chambre.GetCodeTarif()));
         txtNumChambre.setText(Integer.toString(Chambre.GetNumero()));
-        txtCouchages.setText(Integer.toString(Chambre.GetNbLitDouble()
+        lblNbCouchages.setText(Integer.toString(Chambre.GetNbLitDouble()
                 + Chambre.GetNbLitSimple()));
         txtLitsDoubles.setText(Integer.toString(Chambre.GetNbLitDouble()));
         txtLitsSimples.setText(Integer.toString(Chambre.GetNbLitSimple()));
@@ -1023,7 +1057,7 @@ public class IHM_Principale extends javax.swing.JFrame {
      */
     private void ViderChampsChambres() {
         txtNumChambre.setText("");
-        txtCouchages.setText("");
+        lblNbCouchages.setText("");
         txtLitsDoubles.setText("");
         txtLitsSimples.setText("");
         txtAddrMac.setText("");
@@ -1065,6 +1099,10 @@ public class IHM_Principale extends javax.swing.JFrame {
     private void btnAjouterChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAjouterChambreActionPerformed
         flagCreationChambre = true;
         OngletChambreAjouter.setVisible(true);
+        lblCouchages.setVisible(false);
+        lblNbCouchages.setVisible(false);
+        ViderChampsChambres();
+        RemplirBoxTarifs(6);
     }//GEN-LAST:event_btnAjouterChambreActionPerformed
 
     private void txtLitsSimplesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLitsSimplesActionPerformed
@@ -1262,6 +1300,12 @@ public class IHM_Principale extends javax.swing.JFrame {
         OngletChambreAjouter.setVisible(true);
         int numeroChambre = Integer.parseInt(comboChambre.getSelectedItem().toString());
 
+        /* On active les textes avec les couchages */
+        if (!lblCouchages.isVisible() && !lblNbCouchages.isVisible()) {
+            lblCouchages.setVisible(true);
+            lblNbCouchages.setVisible(true);
+        }
+
         /* Chargement des données de la chambre */
         RemplirInfoChambre(numeroChambre, BDD);
     }//GEN-LAST:event_btnModifierChambreActionPerformed
@@ -1304,16 +1348,38 @@ public class IHM_Principale extends javax.swing.JFrame {
         /* Si le flag est true; on est dans la boucle de création d'hôtel
         Sinon; on est dans la boucle de création d'hôtel */
         if (flagCreationChambre) {
-            Chambre.Ajouter(Integer.parseInt(txtNumChambre.getText()),
+            Chambre = new C_Chambre();
+            int res = Chambre.Ajouter(Integer.parseInt(txtNumChambre.getText()),
                     Integer.parseInt(txtLitsSimples.getText()),
                     Integer.parseInt(txtLitsDoubles.getText()),
                     SDB,
                     WC,
                     boxTarifs.getSelectedItem().toString().charAt(0),
                     txtAddrMac.getText(),
+                    comboHotelChambre.getSelectedItem().toString(),
                     BDD);
-            
+
+            switch (res) {
+                /* Erreur MySQL */
+                case -1:
+                    break;
+                /* Réussite */
+                case 0:
+                    JOptionPane.showMessageDialog(rootPane, "L'entrée a été "
+                            + "modifiée",
+                            "Opération réussie", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                /* Doublon existant */
+                case 1:
+                    JOptionPane.showMessageDialog(rootPane,
+                            "Aucune modification apportée à la base de données",
+                            "Doublon trouvé",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    break;
+            }
+
         } else {
+            Chambre = new C_Chambre(Integer.parseInt(txtNumChambre.getText()), BDD);
             int res = Chambre.MettreAJour(Integer.parseInt(txtNumChambre.getText()),
                     Integer.parseInt(txtLitsSimples.getText()),
                     Integer.parseInt(txtLitsDoubles.getText()),
@@ -1333,7 +1399,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                 case 1:
                     JOptionPane.showMessageDialog(rootPane,
                             "Aucune modification apportée à la base de données",
-                            "Opération réussie",
+                            "Doublon trouvé",
                             JOptionPane.INFORMATION_MESSAGE);
                     break;
                 /* Erreur MySQL */
@@ -1345,6 +1411,15 @@ public class IHM_Principale extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_btnValiderChambreActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        txtLitsSimples.setText("1");
+        txtLitsDoubles.setText("1");
+        txtNumChambre.setText("140");
+        txtAddrMac.setText("10-11-12-13-14-15");
+        ChangerEtatRadBouton(RadioBoutonSdB, 0, true);
+        ChangerEtatRadBouton(RadioBoutonWC, 0, true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1424,6 +1499,7 @@ public class IHM_Principale extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboServices;
     private javax.swing.JComboBox<String> comboTypeGraphique;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1445,6 +1521,7 @@ public class IHM_Principale extends javax.swing.JFrame {
     private javax.swing.JLabel lblListeServices;
     private javax.swing.JLabel lblLitsDoubles;
     private javax.swing.JLabel lblLitsSimples;
+    private javax.swing.JLabel lblNbCouchages;
     private javax.swing.JLabel lblNbrPersonnes;
     private javax.swing.JLabel lblNomHotel;
     private javax.swing.JLabel lblNomReservation;
@@ -1470,7 +1547,6 @@ public class IHM_Principale extends javax.swing.JFrame {
     private javax.swing.JTextField txtAddrMac;
     private javax.swing.JTextField txtAdresse;
     private javax.swing.JTextField txtCodePostal;
-    private javax.swing.JTextField txtCouchages;
     private javax.swing.JTextField txtDateArrivee;
     private javax.swing.JTextField txtDateFin;
     private javax.swing.JTextField txtLitsDoubles;

@@ -165,6 +165,7 @@ public class C_Chambre {
 
     /**
      * Ajoute une chambre à la base de données
+     *
      * @param newNumero
      * @param newNbLitSimple
      * @param newNbLitDouble
@@ -182,36 +183,40 @@ public class C_Chambre {
             Boolean newaUnWC,
             char newCodeTarif,
             String newAddrMac,
+            String hotelChoisi,
             C_BDD handler) {
         int doublon = 1;
+        C_Hotel hotel = new C_Hotel(hotelChoisi, handler);
+        int id_hotel = hotel.getId();
         try {
             Statement statement = handler.getConnection().createStatement();
-            String requete = "SELECT `id_hotel`,`numero`, `nbLitSimple`,`nbLitDouble`,`SDB`,"
-                    + "`WC`,`codeTarif`,`addrMac` "
-                    + "FROM `t_chambre` "
-                    + "WHERE `numero` =" + this.GetNumero();
+            String requete = "SELECT `numero`"
+                    + " FROM `t_chambre` "
+                    + "WHERE `id_hotel` =" + id_hotel;
             ResultSet resultat = statement.executeQuery(requete);
-            int id_hotel = resultat.getInt(1);
 
+            /* On teste si une chambre avec le même numéro existe */
             while (resultat.next()) {
-                if (newNumero != resultat.getInt(1) ) {
-                    requete = "INSERT INTO `hotel`.`t_chambre` "
-                            + "(`id_hotel, `numero`, `nbLitSimple`, "
-                            + "`nbLitDouble`, `SDB`, `WC`, `codeTarif`, "
-                            + "`addrMac`) "
-                            + "VALUES ('" + id_hotel + "', "
-                            + "'" + newNumero + "', "
-                            + "'" + newNbLitSimple + "', "
-                            + "'" + newNbLitDouble + "', "
-                            + "'" + newaUneSdB + "', "
-                            + "'" + newaUnWC + "', "
-                            + "'" + newCodeTarif + "', "
-                            + "'" + newAddrMac + "')";
-
-                    return 0;
-                }
+                if (resultat.getInt(1) == newNumero)
+                    return doublon;
             }
-            return doublon;
+
+            /* Si non, on peut ajouter la chambre dans la base de données */
+            requete = "INSERT INTO `hotel`.`t_chambre` "
+                    + "(`id_hotel, `numero`, `nbLitSimple`, "
+                    + "`nbLitDouble`, `SDB`, `WC`, `codeTarif`, "
+                    + "`addrMac`) "
+                    + "VALUES ('" + id_hotel + "', "
+                    + "'" + newNumero + "', "
+                    + "'" + newNbLitSimple + "', "
+                    + "'" + newNbLitDouble + "', "
+                    + "'" + newaUneSdB + "', "
+                    + "'" + newaUnWC + "', "
+                    + "'" + newCodeTarif + "', "
+                    + "'" + newAddrMac + "')";
+
+            statement.executeUpdate(requete);
+            return 0;
         } catch (SQLException ex) {
             Logger.getLogger(C_Chambre.class.getName()).log(Level.SEVERE, null, ex);
             errno = ex.getMessage();
@@ -359,6 +364,5 @@ public class C_Chambre {
     public void setIdHotel(int idHotel) {
         this.idHotel = idHotel;
     }
-    
 
 }
