@@ -120,7 +120,6 @@ public class C_Chambre {
             char newCodeTarif,
             String newAddrMac,
             C_BDD handler) {
-        int doublon = 1;
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "SELECT `numero`, `nbLitSimple`,`nbLitDouble`,`SDB`,"
@@ -147,14 +146,12 @@ public class C_Chambre {
                             + "`codeTarif`='" + newCodeTarif + "', "
                             + "`addrMac`='" + newAddrMac
                             + "' WHERE `numero`=" + this.GetNumero();
-
-                    statement.executeUpdate(requete);
-                    return 0;
+                    return statement.executeUpdate(requete);
                 } else /* Valeurs non-modifiées */ {
-                    doublon = 1;
+                    return 0;
                 }
             }
-            return doublon;
+            return 0;
         } catch (SQLException ex) {
             Logger.getLogger(C_Chambre.class.getName())
                     .log(Level.SEVERE, null, ex);
@@ -169,8 +166,8 @@ public class C_Chambre {
      * @param newNumero
      * @param newNbLitSimple
      * @param newNbLitDouble
-     * @param newaUneSdB
-     * @param newaUnWC
+     * @param newaUneSdB - 1 = true, 0 = false
+     * @param newaUnWC - 1 = true, 0 = false
      * @param newCodeTarif
      * @param newAddrMac
      * @param handler
@@ -179,8 +176,8 @@ public class C_Chambre {
     public int Ajouter(int newNumero,
             int newNbLitSimple,
             int newNbLitDouble,
-            Boolean newaUneSdB,
-            Boolean newaUnWC,
+            int newaUneSdB,
+            int newaUnWC,
             char newCodeTarif,
             String newAddrMac,
             String hotelChoisi,
@@ -197,13 +194,14 @@ public class C_Chambre {
 
             /* On teste si une chambre avec le même numéro existe */
             while (resultat.next()) {
-                if (resultat.getInt(1) == newNumero)
+                if (resultat.getInt(1) == newNumero) {
                     return doublon;
+                }
             }
 
             /* Si non, on peut ajouter la chambre dans la base de données */
             requete = "INSERT INTO `hotel`.`t_chambre` "
-                    + "(`id_hotel, `numero`, `nbLitSimple`, "
+                    + "(`id_hotel`, `numero`, `nbLitSimple`, "
                     + "`nbLitDouble`, `SDB`, `WC`, `codeTarif`, "
                     + "`addrMac`) "
                     + "VALUES ('" + id_hotel + "', "
@@ -217,6 +215,26 @@ public class C_Chambre {
 
             statement.executeUpdate(requete);
             return 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(C_Chambre.class.getName()).log(Level.SEVERE, null, ex);
+            errno = ex.getMessage();
+            return -1;
+        }
+    }
+
+    /**
+     * Supprime la chambre de la base de donnée
+     *
+     * @param numero - Numero de la chambre à supprimer
+     * @param handler - Handler MySQL
+     * @return -1 si erreur SQL; autre si requete effectuée
+     */
+    public int Supprimer(int numero, C_BDD handler) {
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "DELETE FROM `hotel`.`t_chambre` "
+                    + "WHERE `t_chambre`.`numero` = '" + numero + "'";
+            return statement.executeUpdate(requete);
         } catch (SQLException ex) {
             Logger.getLogger(C_Chambre.class.getName()).log(Level.SEVERE, null, ex);
             errno = ex.getMessage();

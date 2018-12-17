@@ -161,7 +161,7 @@ public class C_Hotel {
      * @param handler Handler MYSQL
      * @return 1 si l'hôtel a été supprimé, -1 si non
      */
-    public int SupprimerHotel(String hotel, C_BDD handler) {
+    public int Supprimer(String hotel, C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "DELETE FROM `hotel`.`t_hotel` WHERE `t_hotel`.`nom` = "

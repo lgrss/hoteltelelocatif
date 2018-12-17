@@ -428,6 +428,11 @@ public class IHM_Principale extends javax.swing.JFrame {
         lblHotelChambres.setText("Choisir hôtel");
 
         btnSupprimerChambre.setText("Supprimer");
+        btnSupprimerChambre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSupprimerChambreActionPerformed(evt);
+            }
+        });
 
         btnModifierChambre.setText("Modifier");
         btnModifierChambre.addActionListener(new java.awt.event.ActionListener() {
@@ -1218,6 +1223,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                     break;
             }
         }
+        MettreAJourComboBox(comboHotelChambre, "hotel", BDD);
     }//GEN-LAST:event_btnValiderHotelActionPerformed
 
     private void btnModifierHotelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifierHotelActionPerformed
@@ -1252,7 +1258,7 @@ public class IHM_Principale extends javax.swing.JFrame {
         if (JOptionPane.showConfirmDialog(rootPane, "Etes vous sur de vouloir "
                 + "supprimer " + hotelChoisi + " ?", "Attention",
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            Hotel.SupprimerHotel(Hotel.getNom(), BDD);
+            Hotel.Supprimer(Hotel.getNom(), BDD);
         }
         MettreAJourComboBox(comboHotel, "hotel", BDD);
     }//GEN-LAST:event_btnSupprimerHotelActionPerformed
@@ -1340,14 +1346,20 @@ public class IHM_Principale extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_comboChambreItemStateChanged
 
+    /**
+     * Bouton 'Valider' pour l'onglet gestion chambres, a deux comportements
+     * selon le flag levé : Soit un mode création, soit un mode modification
+     *
+     * @param evt
+     */
     private void btnValiderChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValiderChambreActionPerformed
-        /* Récupération des positions des radio boutons */
-        boolean SDB = RadioBoutonSdB[0].isSelected();
-        boolean WC = RadioBoutonWC[0].isSelected();
-
         /* Si le flag est true; on est dans la boucle de création d'hôtel
         Sinon; on est dans la boucle de création d'hôtel */
         if (flagCreationChambre) {
+            /* Récupération des positions des radio boutons */
+            int SDB = (RadioBoutonSdB[0].isSelected()) ? 1 : 0;
+            int WC = (RadioBoutonWC[0].isSelected()) ? 1 : 0;
+
             Chambre = new C_Chambre();
             int res = Chambre.Ajouter(Integer.parseInt(txtNumChambre.getText()),
                     Integer.parseInt(txtLitsSimples.getText()),
@@ -1362,11 +1374,13 @@ public class IHM_Principale extends javax.swing.JFrame {
             switch (res) {
                 /* Erreur MySQL */
                 case -1:
+                    JOptionPane.showMessageDialog(rootPane, Chambre.getErrno(),
+                            "Erreur SQL", JOptionPane.ERROR_MESSAGE);
                     break;
                 /* Réussite */
                 case 0:
                     JOptionPane.showMessageDialog(rootPane, "L'entrée a été "
-                            + "modifiée",
+                            + "ajoutée",
                             "Opération réussie", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 /* Doublon existant */
@@ -1379,6 +1393,8 @@ public class IHM_Principale extends javax.swing.JFrame {
             }
 
         } else {
+            boolean WC = RadioBoutonWC[0].isSelected();
+            boolean SDB = RadioBoutonSdB[0].isSelected();
             Chambre = new C_Chambre(Integer.parseInt(txtNumChambre.getText()), BDD);
             int res = Chambre.MettreAJour(Integer.parseInt(txtNumChambre.getText()),
                     Integer.parseInt(txtLitsSimples.getText()),
@@ -1390,16 +1406,16 @@ public class IHM_Principale extends javax.swing.JFrame {
                     BDD);
             switch (res) {
                 /* Réussite */
-                case 0:
+                default:
                     JOptionPane.showMessageDialog(rootPane, "L'entrée a été "
                             + "modifiée",
                             "Opération réussie", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 /* Doublon existant */
-                case 1:
+                case 0:
                     JOptionPane.showMessageDialog(rootPane,
                             "Aucune modification apportée à la base de données",
-                            "Doublon trouvé",
+                            "Opération réussie",
                             JOptionPane.INFORMATION_MESSAGE);
                     break;
                 /* Erreur MySQL */
@@ -1409,7 +1425,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                     break;
             }
         }
-
+        MettreAJourComboBox(comboChambre, "chambre", BDD);
     }//GEN-LAST:event_btnValiderChambreActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -1420,6 +1436,22 @@ public class IHM_Principale extends javax.swing.JFrame {
         ChangerEtatRadBouton(RadioBoutonSdB, 0, true);
         ChangerEtatRadBouton(RadioBoutonWC, 0, true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnSupprimerChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupprimerChambreActionPerformed
+        String hotelChoisi = comboHotelChambre.getSelectedItem().toString();
+        int NumeroChambre = Integer.parseInt(
+                comboChambre.getSelectedItem().toString());
+
+        Chambre = new C_Chambre(NumeroChambre, BDD);
+
+        if (JOptionPane.showConfirmDialog(rootPane, "Etes vous sur de vouloir "
+                + "supprimer la chambre " + NumeroChambre + " de l'hôtel "
+                + hotelChoisi +" ?", "Attention",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            Chambre.Supprimer(NumeroChambre, BDD);
+        }
+        MettreAJourComboBox(comboChambre, "chambre", BDD);
+    }//GEN-LAST:event_btnSupprimerChambreActionPerformed
 
     /**
      * @param args the command line arguments
