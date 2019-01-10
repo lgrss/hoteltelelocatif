@@ -568,6 +568,8 @@
                                       <Component id="lblTarif" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="boxTarifs" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="298" max="-2" attributes="0"/>
+                                      <Component id="lblModeChambre" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="1" attributes="0">
@@ -641,6 +643,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="boxTarifs" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="lblTarif" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblModeChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -821,6 +824,11 @@
                         <Property name="text" type="java.lang.String" value="jLabel1"/>
                       </Properties>
                     </Component>
+                    <Component class="javax.swing.JLabel" name="lblModeChambre">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Mode :"/>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -863,32 +871,31 @@
                                               <Component id="lblPrenomReservation" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="lblDateArrivee" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="lblDateFin" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblNbrPersonnes" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="lblChambresReservees" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="lblPrixRestant" alignment="0" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                               <Component id="txtNomReservation" max="32767" attributes="0"/>
                                               <Component id="txtPrenomReservation" max="32767" attributes="0"/>
                                               <Component id="txtDateArrivee" max="32767" attributes="0"/>
                                               <Component id="txtDateFin" max="32767" attributes="0"/>
-                                              <Component id="jTextField3" min="-2" pref="226" max="-2" attributes="0"/>
-                                              <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="jTextField2" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="txtPrixRestantAPayer" min="-2" pref="226" max="-2" attributes="0"/>
+                                              <Component id="txtChambreReservees" alignment="0" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="136" max="-2" attributes="0"/>
-                                          <Component id="btnPaiementRecu" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                          <Component id="btnCodeChambre" min="-2" max="-2" attributes="0"/>
-                                      </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="568" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="622" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="129" max="-2" attributes="0"/>
+                          <Component id="btnPaiementRecu" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="btnCodeChambre" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -925,25 +932,20 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblNbrPersonnes" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField1" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jTextField2" alignment="3" pref="25" max="32767" attributes="0"/>
+                              <Component id="txtChambreReservees" alignment="3" pref="25" max="32767" attributes="0"/>
                               <Component id="lblChambresReservees" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jTextField3" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                              <Component id="txtPrixRestantAPayer" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                               <Component id="lblPrixRestant" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" pref="132" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnPaiementRecu" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnCodeChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="213" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -962,6 +964,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="OK"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOkReservationActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblNomReservation">
                   <Properties>
@@ -986,31 +991,36 @@
                 <Component class="javax.swing.JButton" name="btnPaiementRecu">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Valider paiement"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPaiementRecuActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnCodeChambre">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Code Chambre"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCodeChambreActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txtNomReservation">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txtPrenomReservation">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txtDateArrivee">
                 </Component>
                 <Component class="javax.swing.JTextField" name="txtDateFin">
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblNbrPersonnes">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Nombre de personnes"/>
-                  </Properties>
-                </Component>
                 <Component class="javax.swing.JLabel" name="lblChambresReservees">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Chambres r&#xe9;serv&#xe9;e(s)"/>
+                    <Property name="text" type="java.lang.String" value="Chambre r&#xe9;serv&#xe9;e"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblPrixRestant">
@@ -1018,11 +1028,12 @@
                     <Property name="text" type="java.lang.String" value="Prix restant &#xe0; payer"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField1">
+                <Component class="javax.swing.JTextField" name="txtChambreReservees">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField2">
-                </Component>
-                <Component class="javax.swing.JTextField" name="jTextField3">
+                <Component class="javax.swing.JTextField" name="txtPrixRestantAPayer">
                 </Component>
               </SubComponents>
             </Container>
