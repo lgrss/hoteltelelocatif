@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class ArduinoSocket extends Thread
 {
@@ -56,6 +57,8 @@ public class ArduinoSocket extends Thread
                     
                     if (etat == 0) out.write('V');
                     else if (etat == 1) out.write('P');
+                    else if (etat == 2) out.write('I');
+                    else if (etat == 3) out.write('D');
                     else if (etat == -1) out.write('R');
                     else if (etat == -2) out.write('S');
                 }
@@ -115,18 +118,60 @@ public class ArduinoSocket extends Thread
    
    private int CheckRequest(String mac){
     try {
-        String request = "SELECT `PorteBloque` FROM `t_reservation` WHERE id_chambre=" + RoomRequest(mac);
         ResultSet resultat;
+        
+        int idChambre = RoomRequest(mac);
+        
+        String request = "SELECT `porteBloque` FROM `t_reservation` WHERE id_chambre=" + idChambre;
         resultat = bdd.SelectRequest("hotel", request);
         resultat.beforeFirst();
         if(!resultat.next()) return -1;
-        return resultat.getInt(1);
+        int resultat1 = resultat.getInt(1);
+        if (resultat1 == 1) return 1;
+        
+        request = "SELECT `commandePaye` FROM `t_reservation` WHERE id_chambre=" + idChambre;
+        resultat = bdd.SelectRequest("hotel", request);
+        resultat.beforeFirst();
+        if(!resultat.next()) return -1;
+        int resultat2 = resultat.getInt(1);
+        if (resultat2 == 0) return 2;
+        
+        int resultat3 = DateRequest(mac, idChambre);
+        if (resultat3 == 0) return 3;
+        
+        return 0;
     } catch (SQLException ex) {
         System.out.println(ex);
         return -2;
     }
    }
 
+   private int DateRequest(String mac, int idChambre){
+       try {
+        ResultSet resultat;
+        
+        String request = "SELECT `dateDebut` FROM `t_reservation` WHERE id_chambre=" + idChambre;
+        resultat = bdd.SelectRequest("hotel", request);
+        resultat.beforeFirst();
+        if(!resultat.next()) return -1;
+        Date date1 = resultat.getDate(1);
+        
+        request = "SELECT `dateFin` FROM `t_reservation` WHERE id_chambre=" + idChambre;
+        resultat = bdd.SelectRequest("hotel", request);
+        resultat.beforeFirst();
+        if(!resultat.next()) return -1;
+        Date date2 = resultat.getDate(1);
+        
+        Date date = new Date();
+        if(date1.before(date) && date2.after(date)) return 1;
+        else return 0;
+        
+    } catch (SQLException ex) {
+        System.out.println(ex);
+        return -2;
+    }
+   }
+   
    private int RoomRequest(String mac)
    {
     try {

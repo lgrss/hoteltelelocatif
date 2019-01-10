@@ -149,7 +149,13 @@ void loop()
 
     byte reponse = client.read();
 
-    if (reponse == 80) {
+    if (reponse == 68) {
+      afficherErreur("MAUVAISE DATE");
+    }
+    else if (reponse == 73) {
+      afficherErreur("COMMANDE IMPAYEE");
+    }
+    else if (reponse == 80) {
       afficherErreur("  PORTE BLOQUEE");
       blocageEnCours = false;
     }
@@ -399,6 +405,12 @@ String rechargerMDP()
 
       if (reponse == 67) {
         nbReponse = 0;
+      }
+      else if (reponse == 68) {
+        afficherErreur("MAUVAISE DATE");
+      }
+      else if (reponse == 73) {
+        afficherErreur("COMMANDE IMPAYEE");
       }
       else if (reponse == 80) {
         afficherErreur("  PORTE BLOQUEE");
