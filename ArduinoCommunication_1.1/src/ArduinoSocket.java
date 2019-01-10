@@ -1,49 +1,33 @@
-import java.awt.Color;
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.swing.JPanel;
-import org.apache.commons.io.IOUtils;
 
 public class ArduinoSocket extends Thread
-{  private Socket socket = null;
-   private ServerSocket server = null;
+{
+   private BDD bdd;
+   private Socket socket = null;
    private BufferedInputStream in = null;
    private DataOutputStream out = null;
-   
-   private int Port;
-   private BDD bdd;
-   private JPanel Panel;
    private String text;
    
-   
-   public ArduinoSocket(int port, JPanel panel)
+   public ArduinoSocket(Socket newSocket, BDD newBDD)
    {  
-       Port = port;
-       bdd = new BDD("jdbc:mysql://10.73.8.49:3306/", "root", "");
-       Panel = panel;
+       socket = newSocket;
+       bdd = newBDD;
    }
    
    public void run()
    {
        try
-      {  System.out.println("Binding to port " + Port + ", please wait  ...");
-         server = new ServerSocket(Port);  
-         System.out.println("Server started: " + server);
-         System.out.println("Waiting for a client ..."); 
-         Panel.setBackground(Color.orange);
-         socket = server.accept();
-         System.out.println("Client accepted: " + socket);
+      { 
          open();         
-         while (server.isBound())
+         while (socket.isBound())
          {  
             int userText = in.read();
             char userChar = (char) userText;
+            
+            System.out.println(userChar);
             
             if(userChar == '#') text = "#";
             else if (userChar == '!')
@@ -87,28 +71,18 @@ public class ArduinoSocket extends Thread
       }
       catch(IOException ioe)
       {  System.out.println(ioe); 
-         Panel.setBackground(Color.red);
       }
    }
    public void open() throws IOException
    {  
       in = new BufferedInputStream(socket.getInputStream());
       out = new DataOutputStream(socket.getOutputStream());
-      Panel.setBackground(Color.green);
    }
    public void close() throws IOException
-   {  if (socket != null)    socket.close();
-      if (server != null)    server.close();
+   {  
+      if (socket != null)    socket.close();
       if (out != null) out.close();
       if (in != null)  in.close();
-      Panel.setBackground(Color.red);
-   }
-   public static void main(String args[])
-   {  ArduinoSocket server = null;
-      if (args.length != 1)
-         System.out.println("Usage: java ChatServer port");
-      else
-         server = new ArduinoSocket(Integer.parseInt(args[0]), null);
    }
    private int CodeRequest(String mac)
    {
