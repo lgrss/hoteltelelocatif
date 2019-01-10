@@ -125,13 +125,12 @@ public class C_Chambre {
             String requete = "SELECT `numero`, `nbLitSimple`,`nbLitDouble`,`SDB`,"
                     + "`WC`,`codeTarif`,`addrMac` "
                     + "FROM `t_chambre` "
-                    + "WHERE `numero` =" + this.GetNumero();
+                    + "WHERE `numero` =" + newNumero;
             ResultSet resultat = statement.executeQuery(requete);
 
             /* Valeurs modifiées */
             while (resultat.next()) {
-                if (newNumero != resultat.getInt(1)
-                        || newNbLitSimple != resultat.getInt(2)
+                if ( newNbLitSimple != resultat.getInt(2)
                         || newNbLitDouble != resultat.getInt(3)
                         || newaUneSdB != resultat.getBoolean(4)
                         || newaUnWC != resultat.getBoolean(5)
@@ -147,11 +146,20 @@ public class C_Chambre {
                             + "`addrMac`='" + newAddrMac
                             + "' WHERE `numero`=" + this.GetNumero();
                     return statement.executeUpdate(requete);
-                } else /* Valeurs non-modifiées */ {
-                    return 0;
                 }
+                else return 0;
             }
-            return 0;
+
+            requete = "UPDATE `t_chambre` "
+                    + "SET `numero`=" + newNumero + ", "
+                    + "`nbLitSimple`=" + newNbLitSimple + ", "
+                    + "`nbLitDouble`=" + newNbLitDouble + ", "
+                    + "`SDB`=" + newaUneSdB + ", "
+                    + "`WC`=" + newaUnWC + ", "
+                    + "`codeTarif`='" + newCodeTarif + "', "
+                    + "`addrMac`='" + newAddrMac
+                    + "' WHERE `numero`=" + this.GetNumero();
+            return statement.executeUpdate(requete);
         } catch (SQLException ex) {
             Logger.getLogger(C_Chambre.class.getName())
                     .log(Level.SEVERE, null, ex);
