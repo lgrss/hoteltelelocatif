@@ -84,7 +84,9 @@
                                           <Component id="lblChangerHotel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="comboHotel" min="-2" pref="155" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="btnAfficherHotel" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="106" max="-2" attributes="0"/>
                                           <Component id="btnModifierHotel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="btnSupprimerHotel" min="-2" max="-2" attributes="0"/>
@@ -110,12 +112,13 @@
                               <Component id="lblChangerHotel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnAjouterHotel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnModifierHotel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnAfficherHotel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="OngletHotelAjouter" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
+                          <EmptySpace pref="108" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -220,7 +223,7 @@
                                               </Group>
                                           </Group>
                                       </Group>
-                                      <EmptySpace pref="307" max="32767" attributes="0"/>
+                                      <EmptySpace pref="375" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="lblListeServices" min="-2" max="-2" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
@@ -398,6 +401,14 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JButton" name="btnAfficherHotel">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Afficher"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAfficherHotelActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="OngletChambres">
@@ -419,32 +430,31 @@
                                   <Component id="jSeparator3" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                                          <Component id="lblHotelChambres" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                                          <Component id="comboHotelChambre" min="-2" pref="134" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="comboChambre" min="-2" pref="83" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="btnModifierChambre" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="btnSupprimerChambre" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
-                                          <Component id="btnAjouterChambre" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="OngletChambreAjouter" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace min="0" pref="260" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="OngletChambreAjouter" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="313" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                          <Component id="lblHotelChambres" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                          <Component id="comboHotelChambre" min="-2" pref="134" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="comboChambre" min="-2" pref="83" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="btnAfficherChambre" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnModifierChambre" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnSupprimerChambre" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
+                          <Component id="btnAjouterChambre" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="173" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -467,6 +477,7 @@
                                       <Component id="btnModifierChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="btnAjouterChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="btnSupprimerChambre" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btnAfficherChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -831,6 +842,14 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JButton" name="btnAfficherChambre">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Afficher"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAfficherChambreActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="OngletReception">
@@ -849,60 +868,31 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="sepReceptionClient" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="sepReceptionClient" alignment="1" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
+                                      <Component id="InfoClient" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                                           <Component id="lblNumReservation" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="txtNumeroReservation" min="-2" pref="227" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="btnOkReservation" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="lblNomReservation" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblPrenomReservation" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblDateArrivee" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblDateFin" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblChambresReservees" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lblPrixRestant" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="txtNomReservation" max="32767" attributes="0"/>
-                                              <Component id="txtPrenomReservation" max="32767" attributes="0"/>
-                                              <Component id="txtDateArrivee" max="32767" attributes="0"/>
-                                              <Component id="txtDateFin" max="32767" attributes="0"/>
-                                              <Component id="txtPrixRestantAPayer" min="-2" pref="226" max="-2" attributes="0"/>
-                                              <Component id="txtChambreReservees" alignment="0" max="32767" attributes="0"/>
-                                          </Group>
-                                      </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="622" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="129" max="-2" attributes="0"/>
-                          <Component id="btnPaiementRecu" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                          <Component id="btnCodeChambre" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblNumReservation" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtNumeroReservation" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
@@ -910,42 +900,9 @@
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="sepReceptionClient" min="-2" pref="12" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="txtNomReservation" alignment="0" min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="lblNomReservation" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblPrenomReservation" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtPrenomReservation" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblDateArrivee" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtDateArrivee" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
-                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblDateFin" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtDateFin" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtChambreReservees" alignment="3" pref="25" max="32767" attributes="0"/>
-                              <Component id="lblChambresReservees" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtPrixRestantAPayer" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                              <Component id="lblPrixRestant" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btnPaiementRecu" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnCodeChambre" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="213" max="-2" attributes="0"/>
+                          <Component id="InfoClient" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="192" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -968,73 +925,177 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOkReservationActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblNomReservation">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Nom"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblPrenomReservation">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Pr&#xe9;nom"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblDateArrivee">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Date arriv&#xe9;e"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblDateFin">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Date fin"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnPaiementRecu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Valider paiement"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPaiementRecuActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnCodeChambre">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Code Chambre"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCodeChambreActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtNomReservation">
-                  <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtPrenomReservation">
-                  <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtDateArrivee">
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtDateFin">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblChambresReservees">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Chambre r&#xe9;serv&#xe9;e"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblPrixRestant">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Prix restant &#xe0; payer"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtChambreReservees">
-                  <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtPrixRestantAPayer">
-                </Component>
+                <Container class="javax.swing.JPanel" name="InfoClient">
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblNomReservation" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblPrenomReservation" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblDateArrivee" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblDateFin" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblChambresReservees" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblPrixRestant" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="txtNomReservation" max="32767" attributes="0"/>
+                                          <Component id="txtPrenomReservation" max="32767" attributes="0"/>
+                                          <Component id="txtDateArrivee" max="32767" attributes="0"/>
+                                          <Component id="txtDateFin" max="32767" attributes="0"/>
+                                          <Component id="txtPrixRestantAPayer" min="-2" pref="226" max="-2" attributes="0"/>
+                                          <Component id="txtChambreReservees" alignment="0" min="-2" pref="226" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
+                                      <Component id="btnPaiementRecu" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                                      <Component id="btnCodeChambre" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="btnDebloquerPorte" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="512" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="txtNomReservation" alignment="0" min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="lblNomReservation" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lblPrenomReservation" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtPrenomReservation" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lblDateArrivee" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtDateArrivee" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lblDateFin" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtDateFin" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtChambreReservees" alignment="3" pref="25" max="32767" attributes="0"/>
+                                  <Component id="lblChambresReservees" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtPrixRestantAPayer" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                                  <Component id="lblPrixRestant" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="btnPaiementRecu" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnCodeChambre" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnDebloquerPorte" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JTextField" name="txtNomReservation">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblNomReservation">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nom"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblPrenomReservation">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Pr&#xe9;nom"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtPrenomReservation">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtDateArrivee">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblDateArrivee">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Date arriv&#xe9;e"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblDateFin">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Date fin"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtDateFin">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtPrixRestantAPayer">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblChambresReservees">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Chambre r&#xe9;serv&#xe9;e"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtChambreReservees">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="lblPrixRestant">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Prix restant &#xe0; payer"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnPaiementRecu">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Valider paiement"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPaiementRecuActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnCodeChambre">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Code Chambre"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCodeChambreActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnDebloquerPorte">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="D&#xe9;bloquer porte"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDebloquerPorteActionPerformed"/>
+                      </Events>
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="OngletBilans">
@@ -1068,7 +1129,7 @@
                                   <Component id="btnGenererBilans" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="370" max="32767" attributes="0"/>
+                          <EmptySpace pref="423" max="32767" attributes="0"/>
                           <Component id="panelGraphiqueBilans" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="133" max="-2" attributes="0"/>
                       </Group>

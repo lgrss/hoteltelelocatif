@@ -1,7 +1,11 @@
 /* 
     TO DO LIST :
-        - FAIRE LA RECEPTION CLIENT
+        - FAIRE LE CODE POUR LE BOUTON DEBLOQUER PORTE
+        - CREER LE CONSTRUCTEUR C_CHAMBRE AVEC LE NOM HOTEL (OU ID, SE DEBROUILLER
+        POUR L'OBTENIR DANS L'IHM) 
         - CREER LE BOUTON AFFICHER DANS LES ONGLETS HOTEL ET CHAMBRE
+        - FAIRE L'INTEGRATION DES SERVICES HOTEL
+        - FAIRE L'ONGLET EDITER BILANS
  */
 package com.hotelApp;
 
@@ -9,17 +13,13 @@ import java.awt.event.ItemEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  * @author Karl La Grassa
  */
@@ -40,14 +40,14 @@ public class IHM_Principale extends javax.swing.JFrame {
     est en mode création ou modification */
     C_Hotel Hotel;
     C_Chambre Chambre;
-    
+
     /* Réservation d'une chambre */
     C_Reservation Reservation;
 
     /* flagCreationHotel true si l'on doit ajouter un hotel
                         false si l'on est en train de modifier
      */
-    Boolean flagHotel, flagCreationHotel, flagCreationChambre;
+    Boolean flagHotel, flagCreationHotel, flagCreationChambre, flagAffichageHotel, flagAffichageChambre;
 
     JRadioButton RadioBoutonSdB[];
     JRadioButton RadioBoutonWC[];
@@ -64,6 +64,8 @@ public class IHM_Principale extends javax.swing.JFrame {
         flagHotel = true;
         flagCreationHotel = false;
         flagCreationChambre = false;
+        flagAffichageHotel = false;
+        flagAffichageChambre = false;
 
         /* Initialisation des tableaux de radio bouton */
         RadioBoutonSdB = new JRadioButton[2];
@@ -78,6 +80,8 @@ public class IHM_Principale extends javax.swing.JFrame {
         /* Cacher les panels pour les gestion hôtels et chambres (ergonomie) */
         OngletHotelAjouter.setVisible(false);
         OngletChambreAjouter.setVisible(false);
+        InfoClient.setVisible(false);
+
 
         /* Chargement de toutes les combo box */
         if (BDD.Connecter() == 0) {
@@ -136,6 +140,7 @@ public class IHM_Principale extends javax.swing.JFrame {
         lblNumeroFixe = new javax.swing.JLabel();
         lblNomHotel = new javax.swing.JLabel();
         lblStatusHotel = new javax.swing.JLabel();
+        btnAfficherHotel = new javax.swing.JButton();
         OngletChambres = new javax.swing.JPanel();
         lblHotelChambres = new javax.swing.JLabel();
         btnSupprimerChambre = new javax.swing.JButton();
@@ -168,25 +173,28 @@ public class IHM_Principale extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         lblNbCouchages = new javax.swing.JLabel();
         lblModeChambre = new javax.swing.JLabel();
+        btnAfficherChambre = new javax.swing.JButton();
         OngletReception = new javax.swing.JPanel();
         lblNumReservation = new javax.swing.JLabel();
         txtNumeroReservation = new javax.swing.JTextField();
         sepReceptionClient = new javax.swing.JSeparator();
         btnOkReservation = new javax.swing.JButton();
+        InfoClient = new javax.swing.JPanel();
+        txtNomReservation = new javax.swing.JTextField();
         lblNomReservation = new javax.swing.JLabel();
         lblPrenomReservation = new javax.swing.JLabel();
-        lblDateArrivee = new javax.swing.JLabel();
-        lblDateFin = new javax.swing.JLabel();
-        btnPaiementRecu = new javax.swing.JButton();
-        btnCodeChambre = new javax.swing.JButton();
-        txtNomReservation = new javax.swing.JTextField();
         txtPrenomReservation = new javax.swing.JTextField();
         txtDateArrivee = new javax.swing.JTextField();
+        lblDateArrivee = new javax.swing.JLabel();
+        lblDateFin = new javax.swing.JLabel();
         txtDateFin = new javax.swing.JTextField();
-        lblChambresReservees = new javax.swing.JLabel();
-        lblPrixRestant = new javax.swing.JLabel();
-        txtChambreReservees = new javax.swing.JTextField();
         txtPrixRestantAPayer = new javax.swing.JTextField();
+        lblChambresReservees = new javax.swing.JLabel();
+        txtChambreReservees = new javax.swing.JTextField();
+        lblPrixRestant = new javax.swing.JLabel();
+        btnPaiementRecu = new javax.swing.JButton();
+        btnCodeChambre = new javax.swing.JButton();
+        btnDebloquerPorte = new javax.swing.JButton();
         OngletBilans = new javax.swing.JPanel();
         lblBilans = new javax.swing.JLabel();
         comboPeriodeBilan = new javax.swing.JComboBox<>();
@@ -328,7 +336,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                                 .addGroup(OngletHotelAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblVille)
                                     .addComponent(txtVille, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 375, Short.MAX_VALUE)
                         .addGroup(OngletHotelAjouterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblListeServices)
                             .addGroup(OngletHotelAjouterLayout.createSequentialGroup()
@@ -382,6 +390,13 @@ public class IHM_Principale extends javax.swing.JFrame {
                 .addContainerGap(62, Short.MAX_VALUE))
         );
 
+        btnAfficherHotel.setText("Afficher");
+        btnAfficherHotel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAfficherHotelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout OngletHotelLayout = new javax.swing.GroupLayout(OngletHotel);
         OngletHotel.setLayout(OngletHotelLayout);
         OngletHotelLayout.setHorizontalGroup(
@@ -397,7 +412,9 @@ public class IHM_Principale extends javax.swing.JFrame {
                                 .addComponent(lblChangerHotel)
                                 .addGap(18, 18, 18)
                                 .addComponent(comboHotel, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnAfficherHotel)
+                                .addGap(106, 106, 106)
                                 .addComponent(btnModifierHotel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnSupprimerHotel)
@@ -416,12 +433,13 @@ public class IHM_Principale extends javax.swing.JFrame {
                     .addComponent(btnSupprimerHotel)
                     .addComponent(lblChangerHotel)
                     .addComponent(btnAjouterHotel)
-                    .addComponent(btnModifierHotel))
+                    .addComponent(btnModifierHotel)
+                    .addComponent(btnAfficherHotel))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(OngletHotelAjouter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(87, 87, 87))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
 
         GestionnaireOnglet.addTab("Gestion Hôtel", OngletHotel);
@@ -665,6 +683,13 @@ public class IHM_Principale extends javax.swing.JFrame {
                 .addGap(147, 147, 147))
         );
 
+        btnAfficherChambre.setText("Afficher");
+        btnAfficherChambre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAfficherChambreActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout OngletChambresLayout = new javax.swing.GroupLayout(OngletChambres);
         OngletChambres.setLayout(OngletChambresLayout);
         OngletChambresLayout.setHorizontalGroup(
@@ -675,27 +700,28 @@ public class IHM_Principale extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jSeparator3))
                     .addGroup(OngletChambresLayout.createSequentialGroup()
-                        .addGroup(OngletChambresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(OngletChambresLayout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(lblHotelChambres)
-                                .addGap(21, 21, 21)
-                                .addComponent(comboHotelChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnModifierChambre)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnSupprimerChambre)
-                                .addGap(94, 94, 94)
-                                .addComponent(btnAjouterChambre))
-                            .addGroup(OngletChambresLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(OngletChambreAjouter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 260, Short.MAX_VALUE)))
+                        .addContainerGap()
+                        .addComponent(OngletChambreAjouter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 313, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(OngletChambresLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(lblHotelChambres)
+                .addGap(21, 21, 21)
+                .addComponent(comboHotelChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(comboChambre, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAfficherChambre)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnModifierChambre)
+                .addGap(18, 18, 18)
+                .addComponent(btnSupprimerChambre)
+                .addGap(73, 73, 73)
+                .addComponent(btnAjouterChambre)
+                .addGap(173, 173, 173))
         );
         OngletChambresLayout.setVerticalGroup(
             OngletChambresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -713,7 +739,8 @@ public class IHM_Principale extends javax.swing.JFrame {
                             .addComponent(comboChambre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnModifierChambre)
                             .addComponent(btnAjouterChambre)
-                            .addComponent(btnSupprimerChambre))))
+                            .addComponent(btnSupprimerChambre)
+                            .addComponent(btnAfficherChambre))))
                 .addGap(19, 19, 19)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -734,13 +761,29 @@ public class IHM_Principale extends javax.swing.JFrame {
             }
         });
 
+        txtNomReservation.setEditable(false);
+
         lblNomReservation.setText("Nom");
 
         lblPrenomReservation.setText("Prénom");
 
+        txtPrenomReservation.setEditable(false);
+
+        txtDateArrivee.setEditable(false);
+
         lblDateArrivee.setText("Date arrivée");
 
         lblDateFin.setText("Date fin");
+
+        txtDateFin.setEditable(false);
+
+        txtPrixRestantAPayer.setEditable(false);
+
+        lblChambresReservees.setText("Chambre réservée");
+
+        txtChambreReservees.setEditable(false);
+
+        lblPrixRestant.setText("Prix restant à payer");
 
         btnPaiementRecu.setText("Valider paiement");
         btnPaiementRecu.addActionListener(new java.awt.event.ActionListener() {
@@ -756,99 +799,113 @@ public class IHM_Principale extends javax.swing.JFrame {
             }
         });
 
-        txtNomReservation.setEditable(false);
+        btnDebloquerPorte.setText("Débloquer porte");
+        btnDebloquerPorte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDebloquerPorteActionPerformed(evt);
+            }
+        });
 
-        txtPrenomReservation.setEditable(false);
-
-        lblChambresReservees.setText("Chambre réservée");
-
-        lblPrixRestant.setText("Prix restant à payer");
-
-        txtChambreReservees.setEditable(false);
+        javax.swing.GroupLayout InfoClientLayout = new javax.swing.GroupLayout(InfoClient);
+        InfoClient.setLayout(InfoClientLayout);
+        InfoClientLayout.setHorizontalGroup(
+            InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InfoClientLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(InfoClientLayout.createSequentialGroup()
+                        .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNomReservation)
+                            .addComponent(lblPrenomReservation)
+                            .addComponent(lblDateArrivee)
+                            .addComponent(lblDateFin)
+                            .addComponent(lblChambresReservees)
+                            .addComponent(lblPrixRestant))
+                        .addGap(56, 56, 56)
+                        .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtNomReservation)
+                            .addComponent(txtPrenomReservation)
+                            .addComponent(txtDateArrivee)
+                            .addComponent(txtDateFin)
+                            .addComponent(txtPrixRestantAPayer, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtChambreReservees, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(InfoClientLayout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addComponent(btnPaiementRecu)
+                        .addGap(30, 30, 30)
+                        .addComponent(btnCodeChambre)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDebloquerPorte)))
+                .addContainerGap(512, Short.MAX_VALUE))
+        );
+        InfoClientLayout.setVerticalGroup(
+            InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InfoClientLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtNomReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNomReservation))
+                .addGap(18, 18, 18)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPrenomReservation)
+                    .addComponent(txtPrenomReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDateArrivee)
+                    .addComponent(txtDateArrivee, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDateFin)
+                    .addComponent(txtDateFin, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtChambreReservees, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                    .addComponent(lblChambresReservees))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPrixRestantAPayer, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPrixRestant))
+                .addGap(36, 36, 36)
+                .addGroup(InfoClientLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPaiementRecu)
+                    .addComponent(btnCodeChambre)
+                    .addComponent(btnDebloquerPorte))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout OngletReceptionLayout = new javax.swing.GroupLayout(OngletReception);
         OngletReception.setLayout(OngletReceptionLayout);
         OngletReceptionLayout.setHorizontalGroup(
             OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OngletReceptionLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OngletReceptionLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(sepReceptionClient))
+                    .addComponent(sepReceptionClient, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(OngletReceptionLayout.createSequentialGroup()
                         .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(InfoClient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(OngletReceptionLayout.createSequentialGroup()
-                                .addGap(73, 73, 73)
+                                .addGap(63, 63, 63)
                                 .addComponent(lblNumReservation)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtNumeroReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnOkReservation))
-                            .addGroup(OngletReceptionLayout.createSequentialGroup()
-                                .addGap(74, 74, 74)
-                                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblNomReservation)
-                                    .addComponent(lblPrenomReservation)
-                                    .addComponent(lblDateArrivee)
-                                    .addComponent(lblDateFin)
-                                    .addComponent(lblChambresReservees)
-                                    .addComponent(lblPrixRestant))
-                                .addGap(56, 56, 56)
-                                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtNomReservation)
-                                    .addComponent(txtPrenomReservation)
-                                    .addComponent(txtDateArrivee)
-                                    .addComponent(txtDateFin)
-                                    .addComponent(txtPrixRestantAPayer, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtChambreReservees))))
-                        .addGap(0, 622, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(OngletReceptionLayout.createSequentialGroup()
-                .addGap(129, 129, 129)
-                .addComponent(btnPaiementRecu)
-                .addGap(30, 30, 30)
-                .addComponent(btnCodeChambre)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnOkReservation)))
+                        .addGap(0, 160, Short.MAX_VALUE))))
         );
         OngletReceptionLayout.setVerticalGroup(
             OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(OngletReceptionLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OngletReceptionLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
                 .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNumReservation)
                     .addComponent(txtNumeroReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnOkReservation))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(sepReceptionClient, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtNomReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblNomReservation))
-                .addGap(18, 18, 18)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblPrenomReservation)
-                    .addComponent(txtPrenomReservation, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDateArrivee)
-                    .addComponent(txtDateArrivee, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDateFin)
-                    .addComponent(txtDateFin, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtChambreReservees, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                    .addComponent(lblChambresReservees))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPrixRestantAPayer, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblPrixRestant))
-                .addGap(36, 36, 36)
-                .addGroup(OngletReceptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnPaiementRecu)
-                    .addComponent(btnCodeChambre))
-                .addGap(213, 213, 213))
+                .addComponent(InfoClient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(192, Short.MAX_VALUE))
         );
 
         GestionnaireOnglet.addTab("Reception client", OngletReception);
@@ -899,7 +956,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                     .addGroup(OngletBilansLayout.createSequentialGroup()
                         .addGap(68, 68, 68)
                         .addComponent(btnGenererBilans)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 370, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 423, Short.MAX_VALUE)
                 .addComponent(panelGraphiqueBilans, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(133, 133, 133))
         );
@@ -947,6 +1004,61 @@ public class IHM_Principale extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void DebloquerPorte(C_BDD handler) {
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "";
+            statement.executeUpdate(requete);
+        } catch (SQLException ex) {
+            Logger.getLogger(IHM_Principale.class.getName()).log(
+                    Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erreur SQL",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Génère un code pour les poignées de chambre. Ce dernier est unique,
+     * différents des codes spéciaux (entretien,...). Le code généré est testé
+     * puis envoyé à la base de données.
+     *
+     * @param handler - Lien à la base de données
+     * @param reservation - Le numéro de réservation
+     * @return Le code en cas de succès (code ajouté dans la BDD), -1 en cas
+     * d'échec, un message d'erreur est envoyé à l'utilisateur
+     */
+    private int GenererCode(int reservation, C_BDD handler) {
+        Random number = new Random();
+        int codeEntretien = 9633;
+        int code;
+
+        code = number.nextInt(9999) + 1; // Borne supérieure exclusive
+
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "SELECT `code` "
+                    + "FROM `t_reservation` "
+                    + "WHERE `id_reservation` = '" + reservation + "'";
+            ResultSet resultat = statement.executeQuery(requete);
+            while (resultat.next()) {
+                while (code == codeEntretien || code == resultat.getInt(1)) {
+                    code = number.nextInt(9999) + 1; // Borne supérieure exclusive
+                }
+            }
+            requete = "UPDATE `t_reservation` "
+                    + "SET `code`= '" + code + "' "
+                    + "WHERE `id_reservation` = '" + reservation + "'";
+            statement.executeUpdate(requete);
+
+            return code;
+        } catch (SQLException ex) {
+            Logger.getLogger(IHM_Principale.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage(),
+                    "Erreur SQL", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+    }
 
     /**
      * Met a jour les combo box avec les listes d'hôtels où de chambres selon ce
@@ -1061,6 +1173,15 @@ public class IHM_Principale extends javax.swing.JFrame {
         txtAddrMac.setText(Chambre.GetAddrMac());
         ChangerEtatRadBouton(RadioBoutonSdB, Chambre.aUneSdB());
         ChangerEtatRadBouton(RadioBoutonWC, Chambre.aUnWC());
+    }
+
+    private void RemplirInfoHotel(String nomHotel, C_BDD handler) {
+        Hotel = new C_Hotel(nomHotel, BDD);
+        txtNomHotel.setText(Hotel.getNom());
+        txtNumFixe.setText(Hotel.getNumTel());
+        txtAdresse.setText(Hotel.getAdresse());
+        txtCodePostal.setText(Hotel.getCP());
+        txtVille.setText(Hotel.getVille());
     }
 
     /**
@@ -1474,7 +1595,8 @@ public class IHM_Principale extends javax.swing.JFrame {
 
     /**
      * Vérification et remplissage des données de l'onglet 'Reservation'
-     * @param evt 
+     *
+     * @param evt
      */
     private void btnOkReservationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkReservationActionPerformed
         int numReservation = Integer.parseInt(txtNumeroReservation.getText());
@@ -1483,20 +1605,57 @@ public class IHM_Principale extends javax.swing.JFrame {
         txtNomReservation.setText(Reservation.getNom());
         txtPrenomReservation.setText(Reservation.getPrenom());
         txtPrixRestantAPayer.setText(Float.toString(
-            Reservation.getPrixRestantAPayer()));
+                Reservation.getPrixRestantAPayer()));
         txtChambreReservees.setText(Integer.toString(
-        Reservation.getNumeroChambre()));
+                Reservation.getNumeroChambre()));
         txtDateArrivee.setText(Reservation.getDateArrivee().toString());
         txtDateFin.setText(Reservation.getDateFin().toString());
+        InfoClient.setVisible(true);
     }//GEN-LAST:event_btnOkReservationActionPerformed
 
+    /**
+     * Valide le paiment : fais passer l'entrée 'commandePayee' de la base de
+     * donnée en 'true' (0)
+     *
+     * @param evt
+     */
     private void btnPaiementRecuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaiementRecuActionPerformed
         Reservation.setCommandePaye(true, BDD);
     }//GEN-LAST:event_btnPaiementRecuActionPerformed
 
     private void btnCodeChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCodeChambreActionPerformed
-        // TODO add your handling code here:
+        String resultat = Integer.toString(
+                GenererCode(Integer.parseInt(txtNumeroReservation.getText()), BDD));
+        JOptionPane.showMessageDialog(this, "Code généré : " + resultat,
+                "Opération réussie", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnCodeChambreActionPerformed
+
+    private void btnAfficherHotelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfficherHotelActionPerformed
+        if (!flagAffichageHotel) {
+            RemplirInfoHotel(comboHotel.getSelectedItem().toString(), BDD);
+            OngletHotelAjouter.setVisible(true);
+            flagAffichageHotel = !flagAffichageHotel;
+        } else {
+            OngletHotelAjouter.setVisible(false);
+            flagAffichageHotel = !flagAffichageHotel;
+        }
+    }//GEN-LAST:event_btnAfficherHotelActionPerformed
+
+    private void btnAfficherChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfficherChambreActionPerformed
+        if (!flagAffichageChambre) {
+            RemplirInfoChambre(Integer.parseInt(
+                    comboHotelChambre.getSelectedItem().toString()), BDD);
+            OngletChambreAjouter.setVisible(true);
+            flagAffichageChambre = !flagAffichageChambre;
+        } else {
+            OngletChambreAjouter.setVisible(false);
+            flagAffichageChambre = !flagAffichageChambre;
+        }
+    }//GEN-LAST:event_btnAfficherChambreActionPerformed
+
+    private void btnDebloquerPorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDebloquerPorteActionPerformed
+
+    }//GEN-LAST:event_btnDebloquerPorteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1544,6 +1703,7 @@ public class IHM_Principale extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane GestionnaireOnglet;
+    private javax.swing.JPanel InfoClient;
     private javax.swing.JPanel OngletBilans;
     private javax.swing.JPanel OngletChambreAjouter;
     private javax.swing.JPanel OngletChambres;
@@ -1553,12 +1713,15 @@ public class IHM_Principale extends javax.swing.JFrame {
     private javax.swing.JScrollPane OngletModifHotel;
     private javax.swing.JPanel OngletReception;
     private javax.swing.JComboBox<String> boxTarifs;
+    private javax.swing.JButton btnAfficherChambre;
+    private javax.swing.JButton btnAfficherHotel;
     private javax.swing.JButton btnAjouterChambre;
     private javax.swing.JButton btnAjouterHotel;
     private javax.swing.JButton btnAjouterServices;
     private javax.swing.JButton btnAnnulerChambre;
     private javax.swing.JButton btnAnnulerHotel;
     private javax.swing.JButton btnCodeChambre;
+    private javax.swing.JButton btnDebloquerPorte;
     private javax.swing.JButton btnGenererBilans;
     private javax.swing.JButton btnModifierChambre;
     private javax.swing.JButton btnModifierHotel;

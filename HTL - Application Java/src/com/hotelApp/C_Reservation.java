@@ -71,6 +71,7 @@ public class C_Reservation {
                 setPrenom(resultat.getString(14));
                 setDateArrivee(resultat.getDate(4));
                 setDateFin(resultat.getDate(5));
+                setNumeroReservation(resultat.getInt(1));
                 
                 if (CommandePaye)
                     setPrixRestantAPayer(0);
@@ -265,7 +266,7 @@ public class C_Reservation {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "UPDATE `t_reservation` "
-                    + "SET `commandePaye`='"+CommandePaye+"' "
+                    + "SET `commandePaye`='"+((CommandePaye) ? 0 : 1)+"' "
                     + "WHERE `id_reservation`='"+NumeroReservation+"'";
             return statement.executeUpdate(requete);
         } catch (SQLException ex) {

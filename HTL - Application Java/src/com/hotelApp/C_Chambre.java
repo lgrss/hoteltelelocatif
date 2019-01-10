@@ -99,6 +99,30 @@ public class C_Chambre {
         }
     }
 
+    public C_Chambre(int idHotel,int Numero, C_BDD handler) {
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "SELECT * FROM `t_chambre` WHERE "
+                    + "`numero`='" + Numero + "'";
+            ResultSet resultat = statement.executeQuery(requete);
+
+            while (resultat.next()) {
+                this.setIdHotel(resultat.getInt(2));
+                this.SetNumero(resultat.getInt(3));
+                this.SetNbLitSimple(resultat.getInt(4));
+                this.SetNbLitDouble(resultat.getInt(5));
+                this.SetSdB(resultat.getBoolean(6));
+                this.SetWC(resultat.getBoolean(7));
+                this.SetCodeTarif(resultat.getString(8).charAt(0));
+                this.SetAddrMac(resultat.getString(9));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(C_Chambre.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            errno = ex.getMessage();
+        }
+    }
+
     /**
      * Mise a jour vers la BDD des caractéristiques d'une chambre
      *
@@ -130,7 +154,7 @@ public class C_Chambre {
 
             /* Valeurs modifiées */
             while (resultat.next()) {
-                if ( newNbLitSimple != resultat.getInt(2)
+                if (newNbLitSimple != resultat.getInt(2)
                         || newNbLitDouble != resultat.getInt(3)
                         || newaUneSdB != resultat.getBoolean(4)
                         || newaUnWC != resultat.getBoolean(5)
@@ -146,8 +170,9 @@ public class C_Chambre {
                             + "`addrMac`='" + newAddrMac
                             + "' WHERE `numero`=" + this.GetNumero();
                     return statement.executeUpdate(requete);
+                } else {
+                    return 0;
                 }
-                else return 0;
             }
 
             requete = "UPDATE `t_chambre` "
