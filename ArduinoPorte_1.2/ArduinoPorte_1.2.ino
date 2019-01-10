@@ -63,7 +63,7 @@ char mac[] = {'9', '0', 'A', '2', 'D', 'A', '1', '1', '1', 'B', 'C', '0', 0};
 IPAddress ip(10, 73, 8, 120);
 IPAddress passerelle(10, 73, 8, 112);
 //Serveur
-IPAddress serveur(10, 73, 8, 49);
+IPAddress serveur(10, 73, 8, 96);
 
 struct Case
 {
@@ -82,6 +82,7 @@ boolean erreur;
 String messageErreur;
 int nbErreur;
 String code;
+String codeEntretien;
 
 //---------------------------------------- SETUP ------------------------------------------
 
@@ -92,6 +93,7 @@ void setup(void) {
   erreur = false;
   nbErreur = 0;
   code = "_ _ _ _";
+  codeEntretien = "9 6 3 3";
   messageErreur = "";
 
   //Configure le port série
@@ -150,10 +152,10 @@ void loop()
     byte reponse = client.read();
 
     if (reponse == 68) {
-      afficherErreur("MAUVAISE DATE");
+      afficherErreur("  MAUVAISE DATE");
     }
     else if (reponse == 73) {
-      afficherErreur("COMMANDE IMPAYEE");
+      afficherErreur(" COMMANDE IMPAYEE");
     }
     else if (reponse == 80) {
       afficherErreur("  PORTE BLOQUEE");
@@ -213,28 +215,24 @@ void saisirCode()
     {
       if (p.x > numPad[i].X1 && p.x < numPad[i].X2 && p.y > numPad[i].Y1 && p.y < numPad[i].Y2)
       {
-        int couleur;
 
         //TOUCHE ANNULER
         if (numPad[i].valeur == 'X')
         {
-          couleur = toucheAnnuler();
+          toucheAnnuler();
         }
         //TOUCHE VALIDER
         else if (numPad[i].valeur == 'V')
         {
-          couleur = toucheValider();
+          toucheValider();
         }
         //AUTRE TOUCHE
         else
         {
-          couleur = toucheNumero(i);
+          toucheNumero(i);
         }
         //Si il n'y a pas d'erreur
         if (!erreur) {
-          //AFFICHE LE NOUVEAU CODE
-          afficherCode(couleur);
-
           //EVITE D'APPUYER PLUSIEURS FOIS SUR LA MEME TOUCHE
           relacherBouton();
         }
@@ -242,37 +240,38 @@ void saisirCode()
           //flush manuel
           while (client.available()) client.read();
         }
+        
       }
     }
   }
 }
 
-int toucheAnnuler()
+void toucheAnnuler()
 {
   code = "_ _ _ _";
-  return NOIR;
+  afficherCode(NOIR);
 }
 
-int toucheValider()
+void toucheValider()
 {
   if (!code.equals("  FAUX ") && !code.equals("  BON  ") && code.charAt(6) != '_')
   {
     //Récupère le mot de passe
     String MDP(rechargerMDP());
-    if (MDP.equals("null")) return NOIR;
 
     //Code bon
     if (MDP.equals(code))
     {
       code = "  BON  ";
+      afficherCode(VERT);
       nbErreur = 0;
       ouvrirPorte();
-      return VERT;
     }
-    //code mauvais
-    else
+    //Code mauvais
+    else if (!MDP.equals("null"))
     {
       code = "  FAUX ";
+      afficherCode(ROUGE);
       nbErreur++;
       //Si trop d'erreur (3)
       if (nbErreur >= 3) {
@@ -282,15 +281,11 @@ int toucheValider()
         blocageEnCours = true;
         code = "_ _ _ _";
       }
-      return ROUGE;
     }
-  }
-  else {
-    return NOIR;
   }
 }
 
-int toucheNumero(int i)
+void toucheNumero(int i)
 {
   if (code.equals("  FAUX ") || code.equals("  BON  ")) code = "_ _ _ _";
   for (int a = 0; a < 7; a += 2)
@@ -301,7 +296,7 @@ int toucheNumero(int i)
       break; //QUITTE LE FOR
     }
   }
-  return NOIR;
+  afficherCode(NOIR);
 }
 
 void relacherBouton()
@@ -325,6 +320,7 @@ void relacherBouton()
 void afficherNumPad()
 {
   tft.fillScreen(NOIR);
+  code = "_ _ _ _";
   afficherCode(NOIR);
   tft.setTextColor(NOIR);
   tft.setTextSize(3);
@@ -389,7 +385,7 @@ String rechargerMDP()
     //Si aucune réponse n'est en train d'être récupérer
     if (nbReponse < 0 || nbReponse >= 4)
     {
-      //Demander le code*
+      //Demander le code
       envoyerRequete("C");
       //augmente le compteur
       compteurTimeOut++;
@@ -407,10 +403,10 @@ String rechargerMDP()
         nbReponse = 0;
       }
       else if (reponse == 68) {
-        afficherErreur("MAUVAISE DATE");
+        afficherErreur("  MAUVAISE DATE");
       }
       else if (reponse == 73) {
-        afficherErreur("COMMANDE IMPAYEE");
+        afficherErreur(" COMMANDE IMPAYEE");
       }
       else if (reponse == 80) {
         afficherErreur("  PORTE BLOQUEE");
