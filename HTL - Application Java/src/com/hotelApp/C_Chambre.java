@@ -71,15 +71,18 @@ public class C_Chambre {
 
     /**
      * Constructeur qui récupère les données à partir de la base de données
-     *
      * @param Numero
      * @param handler
      */
-    public C_Chambre(int Numero, C_BDD handler) {
+    public C_Chambre(String nomHotel, int Numero, C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
-            String requete = "SELECT * FROM `t_chambre` WHERE "
-                    + "`numero`='" + Numero + "'";
+            String requete = "SELECT * "
+                    + "FROM `t_chambre` c "
+                    + "INNER JOIN `t_hotel` h "
+                    + "WHERE c.id_hotel = h.id_hotel "
+                    + "AND `nom`='"+nomHotel+"' "
+                    + "AND `numero`='"+Numero+"'";
             ResultSet resultat = statement.executeQuery(requete);
 
             while (resultat.next()) {
@@ -99,7 +102,7 @@ public class C_Chambre {
         }
     }
 
-    public C_Chambre(int idHotel,int Numero, C_BDD handler) {
+    public C_Chambre(int idHotel, int Numero, C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "SELECT * FROM `t_chambre` WHERE "
@@ -143,32 +146,40 @@ public class C_Chambre {
             Boolean newaUnWC,
             char newCodeTarif,
             String newAddrMac,
+            String nomHotel,
             C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
-            String requete = "SELECT `numero`, `nbLitSimple`,`nbLitDouble`,`SDB`,"
-                    + "`WC`,`codeTarif`,`addrMac` "
-                    + "FROM `t_chambre` "
-                    + "WHERE `numero` =" + newNumero;
+            String requete = "SELECT `numero`, `nbLitSimple`,`nbLitDouble`,"
+                    + "`SDB`, `WC`,`codeTarif`,`addrMac` "
+                    + "FROM `t_chambre` c "
+                    + "INNER JOIN `t_hotel` h "
+                    + "ON c.id_hotel = h.id_hotel "
+                    + "WHERE `nom`='"+nomHotel+"' "
+                    + "AND `numero`='"+this.GetNumero()+"'";
             ResultSet resultat = statement.executeQuery(requete);
 
             /* Valeurs modifiées */
             while (resultat.next()) {
-                if (newNbLitSimple != resultat.getInt(2)
+                if (newNumero != resultat.getInt(1)
+                        || newNbLitSimple != resultat.getInt(2)
                         || newNbLitDouble != resultat.getInt(3)
                         || newaUneSdB != resultat.getBoolean(4)
                         || newaUnWC != resultat.getBoolean(5)
                         || newCodeTarif != resultat.getString(6).charAt(0)
                         || !newAddrMac.equals(resultat.getString(7))) {
-                    requete = "UPDATE `t_chambre` "
-                            + "SET `numero`=" + newNumero + ", "
-                            + "`nbLitSimple`=" + newNbLitSimple + ", "
-                            + "`nbLitDouble`=" + newNbLitDouble + ", "
-                            + "`SDB`=" + newaUneSdB + ", "
-                            + "`WC`=" + newaUnWC + ", "
-                            + "`codeTarif`='" + newCodeTarif + "', "
-                            + "`addrMac`='" + newAddrMac
-                            + "' WHERE `numero`=" + this.GetNumero();
+                    requete = "UPDATE `t_chambre` c "
+                            + "INNER JOIN `t_hotel` h "
+                            + "ON c.id_hotel = h.id_hotel "
+                            + "SET `numero`='"+newNumero+"' "
+                            + "`nbLitSimple`='"+newNbLitSimple+"' "
+                            + "`nbLitDouble`='"+newNbLitDouble+"' "
+                            + "`SDB`='"+newaUneSdB+"' "
+                            + "`WC`='"+newaUnWC+"' "
+                            + "`codeTarif`='"+newCodeTarif+"' "
+                            + "`addrMac`='"+newAddrMac+"' "
+                            + "WHERE c.numero = '"+this.GetNumero()+"' "
+                            + "AND h.nom = '"+nomHotel+"'";
                     return statement.executeUpdate(requete);
                 } else {
                     return 0;

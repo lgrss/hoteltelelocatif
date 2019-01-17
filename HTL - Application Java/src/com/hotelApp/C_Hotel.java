@@ -8,7 +8,6 @@ package com.hotelApp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +22,8 @@ public class C_Hotel {
     private String Ville;
     private String CP;
     private String NumTel;
-    private ArrayList Services;
     private int Id;
+    private String Description;
 
     private String errno;
 
@@ -38,7 +37,7 @@ public class C_Hotel {
         this.Ville = "";
         this.CP = "";
         this.NumTel = "";
-        this.Services = new ArrayList();
+        this.Description = "";
     }
 
     /**
@@ -53,6 +52,7 @@ public class C_Hotel {
         this.CP = getCP(nomHotel, handler);
         this.NumTel = getNumTel(nomHotel, handler);
         this.Id = getId(nomHotel, handler);
+        this.Description = getDescription(nomHotel, handler);
     }
 
     /**
@@ -64,18 +64,21 @@ public class C_Hotel {
      * @param Ville
      * @param Cp
      * @param NumTel
+     * @param Description
      */
     public C_Hotel(String Nom,
             String Adresse,
             String Ville,
             String Cp,
-            String NumTel) {
+            String NumTel,
+            String Description) {
         /* On passe par les setters pour réaliser la gestion d'erreur */
         setNom(Nom);
         setVille(Ville);
         setCP(Cp);
         setNumTel(NumTel);
         setAdresse(Adresse);
+        setDescription(Description);
     }
 
     /**
@@ -90,6 +93,7 @@ public class C_Hotel {
             String newCp,
             String newVille,
             String newNumTel,
+            String newDescription,
             C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
@@ -102,12 +106,14 @@ public class C_Hotel {
                         || !newAdresse.equals(resultat.getString(3))
                         || !newCp.equals(resultat.getString(4))
                         || !newVille.equals(resultat.getString(5))
-                        || !newNumTel.equals(resultat.getString(6))) {
+                        || !newNumTel.equals(resultat.getString(6))
+                        || !newDescription.equals(resultat.getString(7))) {
                     requete = "UPDATE `t_hotel` SET `nom`='" + newNom + "',"
                             + "`adresse`='" + newAdresse + "',"
                             + "`cp`='" + newCp + "',"
                             + "`ville`='" + newVille + "',"
-                            + "`tel`='" + newNumTel + "'"
+                            + "`tel`='" + newNumTel + "',"
+                            + "`description`='"+newDescription+"' "
                             + "WHERE `nom`='" + this.getNom() + "'";
 
                     return statement.executeUpdate(requete);
@@ -138,9 +144,11 @@ public class C_Hotel {
                 case 0:
                     Statement statement = handler.getConnection().createStatement();
                     String requete = "INSERT INTO "
-                            + "`t_hotel`(`nom`, `adresse`, `cp`, `ville`, `tel`) "
+                            + "`t_hotel`(`nom`, `adresse`, `cp`, `ville`, `tel`,"
+                            + "`description`, `image`) "
                             + "VALUES ('" + this.Nom + "','" + this.Adresse + "','"
-                            + this.CP + "','" + this.Ville + "','" + this.NumTel + "')";
+                            + this.CP + "','" + this.Ville + "','" + this.NumTel + "'"
+                            + ",'', '')";
                     statement.executeUpdate(requete);
                     return 0;
                 case 1:
@@ -408,6 +416,31 @@ public class C_Hotel {
     }
 
     /**
+     * Renvoie la description de l'hôtel
+     *
+     * @return Description de l'hôtel
+     */
+    public String getDescription() {
+        return Description;
+    }
+
+    public String getDescription(String NomHotel, C_BDD handler) {
+        try {
+            Statement statement = handler.getConnection().createStatement();
+            String requete = "SELECT `description` FROM `t_hotel`"
+                    + " WHERE `nom`='"+NomHotel+"'";
+            ResultSet resultat = statement.executeQuery(requete);
+            resultat.first();
+            
+            return resultat.getString(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(C_Hotel.class.getName()).log(Level.SEVERE, null, ex);
+            errno = ex.getMessage();
+            return errno;
+        }
+    }
+
+    /**
      * Renvoie le message erreur de la DERNIERE exception levée
      *
      * @return errno
@@ -499,6 +532,10 @@ public class C_Hotel {
             this.NumTel = NumTel;
             return 0;
         }
+    }
+
+    public void setDescription(String Description) {
+        this.Description = Description;
     }
 
 }
