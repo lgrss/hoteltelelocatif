@@ -26,7 +26,7 @@ public class IHM extends javax.swing.JFrame {
     
     public IHM() {
         initComponents();
-        bdd = new BDD("jdbc:mysql://10.73.8.96:3306/", "root", "");
+        bdd = new BDD("jdbc:mysql://localhost:3306/", "root", "");
     }
 
     /**

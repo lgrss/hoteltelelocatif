@@ -28,8 +28,6 @@ public class ArduinoSocket extends Thread
             int userText = in.read();
             char userChar = (char) userText;
             
-            System.out.println(userChar);
-            
             if(userChar == '#') text = "#";
             else if (userChar == '!')
             {

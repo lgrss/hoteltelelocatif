@@ -20,7 +20,7 @@ public class ThreadedArduinoSocket extends Thread
    public ThreadedArduinoSocket(int port, JPanel panel, JLabel label)
    {  
        Port = port;
-       bdd = new BDD("jdbc:mysql://10.73.8.96:3306/", "root", "");
+       bdd = new BDD("jdbc:mysql://localhost:3306/", "root", "");
        Panel = panel;
        Label = label;
    }

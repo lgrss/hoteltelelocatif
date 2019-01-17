@@ -63,7 +63,7 @@ char mac[] = {'9', '0', 'A', '2', 'D', 'A', '1', '1', '1', 'B', 'C', '0', 0};
 IPAddress ip(10, 73, 8, 120);
 IPAddress passerelle(10, 73, 8, 112);
 //Serveur
-IPAddress serveur(10, 73, 8, 96);
+IPAddress serveur(10, 73, 8, 69);
 
 struct Case
 {
@@ -75,6 +75,7 @@ struct Case
 };
 Case numPad[12];
 
+int compteurDelay;
 int compteurTimeOut;
 int timeOutMax;
 boolean blocageEnCours;
@@ -82,7 +83,19 @@ boolean erreur;
 String messageErreur;
 int nbErreur;
 String code;
-String codeEntretien;
+
+void envoyerRequete(String);
+void ouvrirPorte();
+void afficherErreur(String);
+String rechargerMDP();
+void afficherCode(int);
+void afficherNumPad();
+void relacherBouton();
+void saisirCode();
+void toucheAnnuler();
+void toucheValider();
+void toucheNumero(int);
+void specialEntretien();
 
 //---------------------------------------- SETUP ------------------------------------------
 
@@ -93,9 +106,10 @@ void setup(void) {
   erreur = false;
   nbErreur = 0;
   code = "_ _ _ _";
-  codeEntretien = "9 6 3 3";
   messageErreur = "";
-
+  compteurDelay = 0;
+  compteurTimeOut = 0;
+  
   //Configure le port série
   Serial.begin(9600);
 
@@ -108,15 +122,6 @@ void setup(void) {
   uint16_t identifiant = tft.readID();
   tft.begin(identifiant);
   tft.fillScreen(NOIR);
-
-  //Essaye de se connecter au serveur
-  Serial.println("connecting...");
-  while (!client.connect(serveur, 4242))
-  {
-    afficherErreur("PROBLEME SERVEUR");
-    Serial.println("failed to connect, trying again...");
-  }
-  Serial.println("connected");
 }
 
 //---------------------------------------- LOOP ------------------------------------------
@@ -124,74 +129,87 @@ void setup(void) {
 void loop()
 {
   //Vérifie si le client est connecté
-  if (!client.connected() || compteurTimeOut >= timeOutMax) {
+  if (!client.connected() || compteurTimeOut >= timeOutMax) 
+  {
     if (!client.connected()) afficherErreur("PROBLEME SERVEUR");
-    Serial.println("disconnected");
     client.stop();
-    Serial.println("reconnecting...");
-    while (!client.connect(serveur, 4242))
+    while (!client.connected()) 
     {
-      Serial.println("failed to reconnect, trying again...");
+      client.connect(serveur, 4242);
+      specialEntretien();
     }
-    Serial.println("reconnected");
     compteurTimeOut = 0;
     erreur = false;
   }
 
-  //Demande l'état des erreurs
-  envoyerRequete("E");
-  //Gère le Time Out en cas de cable déconnecté
-  compteurTimeOut++;
-
-  delay(100);
-
-  //ANALYSE LES DONNEES RECUES
-  if (client.available()) {
-    compteurTimeOut = 0;
-
-    byte reponse = client.read();
-
-    if (reponse == 68) {
-      afficherErreur("  MAUVAISE DATE");
-    }
-    else if (reponse == 73) {
-      afficherErreur(" COMMANDE IMPAYEE");
-    }
-    else if (reponse == 80) {
-      afficherErreur("  PORTE BLOQUEE");
-      blocageEnCours = false;
-    }
-    else if (reponse == 82) {
-      afficherErreur("PAS DE RESERVATION");
-    }
-    else if (reponse == 83) {
-      afficherErreur("PROBLEME SERVEUR");
-    }
-    else if (reponse == 86) {
-      if (!blocageEnCours)
-      {
-        erreur = false;
-        //Reset le nombre d'erreur
-        nbErreur = 0;
-        //Affiche le clavier
-        afficherNumPad();
-        //Pret pour la saisie du code
-        while (!erreur) saisirCode();
+  //Toutes les 10 secondes
+  if(compteurDelay >= 10)
+  {
+    //Demande l'état des erreurs
+    envoyerRequete("E");
+    //Gère le Time Out en cas de cable déconnecté
+    compteurTimeOut++;
+  
+    delay(100);
+  
+    //ANALYSE LES DONNEES RECUES
+    if (client.available()) 
+    {
+      compteurTimeOut = 0;
+  
+      int  reponse = client.read();     
+  
+      if (reponse == 68) {
+        afficherErreur("  MAUVAISE DATE");
       }
-      else {
-        //Renvoit une requete pour le blocage de la porte
-        envoyerRequete("B");
+      else if (reponse == 73) {
+        afficherErreur(" COMMANDE IMPAYEE");
+      }
+      else if (reponse == 80) {
+        afficherErreur("  PORTE BLOQUEE");
+        blocageEnCours = false;
+      }
+      else if (reponse == 82) {
+        afficherErreur("PAS DE RESERVATION");
+      }
+      else if (reponse == 83) {
+        afficherErreur("PROBLEME SERVEUR");
+      }
+      else if (reponse == 86) {
+        if (!blocageEnCours)
+        {
+          erreur = false;
+          //Reset le nombre d'erreur
+          nbErreur = 0;
+          //Affiche le clavier
+          afficherNumPad();
+          //Pret pour la saisie du code
+          while(!erreur) saisirCode();
+        }
+        else {
+          //Renvoit une requete pour le blocage de la porte
+          envoyerRequete("B");
+        }
       }
     }
+  
+    //Time Out détecté
+    if (compteurTimeOut >= timeOutMax){
+      afficherErreur("    TIME OUT");
+    }
+
+    compteurDelay = 0;
   }
 
-  //Time Out détecté
-  if (compteurTimeOut >= timeOutMax){
-    afficherErreur("    TIME OUT");
+  
+  if(erreur)
+  {
+    specialEntretien();
   }
-
-  //Attend 10 sec
-  delay(10000);
+  
+  //Attend 1 sec
+  delay(1000);
+  compteurDelay++;
 }
 
 //---------------------------------------- FONCTIONS ------------------------------------------
@@ -231,12 +249,11 @@ void saisirCode()
         {
           toucheNumero(i);
         }
-        //Si il n'y a pas d'erreur
-        if (!erreur) {
-          //EVITE D'APPUYER PLUSIEURS FOIS SUR LA MEME TOUCHE
-          relacherBouton();
-        }
-        else {
+        
+        //EVITE D'APPUYER PLUSIEURS FOIS SUR LA MEME TOUCHE
+        relacherBouton();
+        
+        if (erreur) {
           //flush manuel
           while (client.available()) client.read();
         }
@@ -260,7 +277,7 @@ void toucheValider()
     String MDP(rechargerMDP());
 
     //Code bon
-    if (MDP.equals(code))
+    if (MDP.equals(code) || code.equals("9 6 3 3"))
     {
       code = "  BON  ";
       afficherCode(VERT);
@@ -367,19 +384,8 @@ String rechargerMDP()
   while (!erreur)
   {
     //VERIFIE QUE L'ARDUINO EST TOUJOURS CONNECTE
-    if (!client.connected() || compteurTimeOut >= timeOutMax) {
-      if (!client.connected()) afficherErreur("PROBLEME SERVEUR");
-      Serial.println("disconnected");
-      client.stop();
-      Serial.println("reconnecting...");
-      while (!client.connect(serveur, 4242))
-      {
-        Serial.println("failed to reconnect, trying again...");
-      }
-      Serial.println("reconnected");
-      compteurTimeOut = 0;
-      erreur = false;
-      afficherNumPad();
+    if (!client.connected()) {
+      afficherErreur("PROBLEME SERVEUR");
     }
 
     //Si aucune réponse n'est en train d'être récupérer
@@ -461,6 +467,10 @@ void ouvrirPorte()
   tft.fillTriangle(100, 220, 200, 70, 220, 70, VERT);
   delay(5000);
   afficherNumPad();
+  if (erreur) {
+    erreur = false;
+    afficherErreur(messageErreur);
+  }
 }
 
 void envoyerRequete(String type)
@@ -472,5 +482,22 @@ void envoyerRequete(String type)
   String fin("!");
   String message(debut + milieu + fin);
   client.print(message);
+}
+
+void specialEntretien()
+{
+  TSPoint p = ts.getPoint();
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
+  if (p.z > MINPRESSION && p.z < MAXPRESSION)
+  {
+    afficherNumPad();
+    long compteurTemps = millis() + 10000;
+    while(millis() < compteurTemps){
+      saisirCode();
+    }
+    erreur = false;
+    afficherErreur(messageErreur);
+  }
 }
 
