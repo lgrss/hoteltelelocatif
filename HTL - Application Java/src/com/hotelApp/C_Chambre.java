@@ -168,15 +168,17 @@ public class C_Chambre {
                         || newaUnWC != resultat.getBoolean(5)
                         || newCodeTarif != resultat.getString(6).charAt(0)
                         || !newAddrMac.equals(resultat.getString(7))) {
+                    int SdB = (newaUneSdB) ? 1 : 0;
+                    int WC = (newaUnWC) ? 1 : 0;
                     requete = "UPDATE `t_chambre` c "
                             + "INNER JOIN `t_hotel` h "
                             + "ON c.id_hotel = h.id_hotel "
-                            + "SET `numero`='"+newNumero+"' "
-                            + "`nbLitSimple`='"+newNbLitSimple+"' "
-                            + "`nbLitDouble`='"+newNbLitDouble+"' "
-                            + "`SDB`='"+newaUneSdB+"' "
-                            + "`WC`='"+newaUnWC+"' "
-                            + "`codeTarif`='"+newCodeTarif+"' "
+                            + "SET `numero`='"+newNumero+"', "
+                            + "`nbLitSimple`='"+newNbLitSimple+"', "
+                            + "`nbLitDouble`='"+newNbLitDouble+"', "
+                            + "`SDB`='"+SdB+"', "
+                            + "`WC`='"+WC+"', "
+                            + "`codeTarif`='"+newCodeTarif+"', "
                             + "`addrMac`='"+newAddrMac+"' "
                             + "WHERE c.numero = '"+this.GetNumero()+"' "
                             + "AND h.nom = '"+nomHotel+"'";

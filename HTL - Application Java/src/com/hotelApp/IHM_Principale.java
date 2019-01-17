@@ -1,7 +1,5 @@
 /* 
     TO DO LIST : 
-        - TROUVER UNE SOLUTION POUR LES TYPAGES BOOLEENS ET INT DANS METTREAJOUR
-        C_CHAMBRE
         - FAIRE L'ONGLET EDITER BILANS
  */
 package com.hotelApp;
@@ -16,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 /**
  * @author Karl La Grassa
@@ -493,11 +492,6 @@ public class IHM_Principale extends javax.swing.JFrame {
         comboChambre.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 comboChambreMouseClicked(evt);
-            }
-        });
-        comboChambre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboChambreActionPerformed(evt);
             }
         });
 
@@ -1003,6 +997,40 @@ public class IHM_Principale extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Passe en lecture seule tous les éléments d'un onglet donné en paramètres
+     *
+     * @param onglet L'onglet à faire changer d'état
+     * @param etat 1 pour oui, 0 pour non
+     */
+    private void PasserEnLectureSeule(String onglet, boolean etat) {
+        switch (onglet) {
+            case "Chambres":
+                if (etat) {
+                    txtLitsSimples.setEditable(false);
+                    txtLitsDoubles.setEditable(false);
+                    txtNumChambre.setEditable(false);
+                    txtAddrMac.setEditable(false);
+                    ((JTextField)boxTarifs.getEditor().getEditorComponent()).setEditable(false);
+                } else {
+                    txtLitsSimples.setEditable(true);
+                    txtLitsDoubles.setEditable(true);
+                    txtNumChambre.setEditable(true);
+                    txtAddrMac.setEditable(true);
+                }
+                break;
+            case "Hotel":
+                if (etat) {
+
+                } else {
+
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private int DebloquerPorte(int NumeroReservation, C_BDD handler) {
         try {
             Statement statement = handler.getConnection().createStatement();
@@ -1166,7 +1194,7 @@ public class IHM_Principale extends javax.swing.JFrame {
      */
     private void RemplirInfoChambre(String nomHotel, int numeroChambre, C_BDD handler) {
         Chambre = new C_Chambre(nomHotel, numeroChambre, BDD);
-        boxTarifs.addItem(Character.toString(Chambre.GetCodeTarif()));
+        boxTarifs.setSelectedItem(Character.toString(Chambre.GetCodeTarif()));
         txtNumChambre.setText(Integer.toString(Chambre.GetNumero()));
         lblNbCouchages.setText(Integer.toString(Chambre.GetNbLitDouble()
                 + Chambre.GetNbLitSimple()));
@@ -1413,10 +1441,6 @@ public class IHM_Principale extends javax.swing.JFrame {
         MettreAJourComboBox(comboHotel, "hotel", BDD);
     }//GEN-LAST:event_comboHotelMouseClicked
 
-    private void comboChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboChambreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboChambreActionPerformed
-
     // INUTILE
     private void comboChambreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboChambreMouseClicked
         /* Cette ligne va dans la version hotel 
@@ -1460,6 +1484,8 @@ public class IHM_Principale extends javax.swing.JFrame {
 
         /* Chargement des données de la chambre */
         RemplirInfoChambre(nomHotel, numeroChambre, BDD);
+        RemplirBoxTarifs(6);
+        boxTarifs.setSelectedItem(Chambre.GetCodeTarif());
         lblModeChambre.setText("Mode : Modification de chambre");
     }//GEN-LAST:event_btnModifierChambreActionPerformed
 
@@ -1503,11 +1529,10 @@ public class IHM_Principale extends javax.swing.JFrame {
     private void btnValiderChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValiderChambreActionPerformed
         /* Si le flag est true; on est dans la boucle de création d'hôtel
         Sinon; on est dans la boucle de création d'hôtel */
-        int SDB = (RadioBoutonSdB[0].isSelected()) ? 1 : 0;
-        int WC = (RadioBoutonWC[0].isSelected()) ? 1 : 0;
-        /* Récupération des positions des radio boutons */
         if (flagCreationChambre) {
-
+            int SDB = (RadioBoutonSdB[0].isSelected()) ? 1 : 0;
+            int WC = (RadioBoutonWC[0].isSelected()) ? 1 : 0;
+            /* Récupération des positions des radio boutons */
             Chambre = new C_Chambre();
             int res = Chambre.Ajouter(Integer.parseInt(txtNumChambre.getText()),
                     Integer.parseInt(txtLitsSimples.getText()),
@@ -1540,8 +1565,8 @@ public class IHM_Principale extends javax.swing.JFrame {
                     break;
             }
         } else {
-            /*boolean WC = RadioBoutonWC[0].isSelected();
-            boolean SDB = RadioBoutonSdB[0].isSelected();*/
+            boolean WC = RadioBoutonWC[0].isSelected();
+            boolean SDB = RadioBoutonSdB[0].isSelected();
             Chambre = new C_Chambre(comboHotelChambre.getSelectedItem().toString(),
                     Integer.parseInt(txtNumChambre.getText()), BDD);
             int res = Chambre.MettreAJour(Integer.parseInt(txtNumChambre.getText()),
@@ -1629,7 +1654,11 @@ public class IHM_Principale extends javax.swing.JFrame {
      * @param evt
      */
     private void btnPaiementRecuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaiementRecuActionPerformed
-        Reservation.setCommandePaye(true, BDD);
+        if (Reservation.setCommandePaye(true, BDD) > 0) {
+            JOptionPane.showMessageDialog(this, "Paiement validé", "Opération "
+                    + "réussie", JOptionPane.INFORMATION_MESSAGE);
+            txtPrixRestantAPayer.setText("0");
+        }
     }//GEN-LAST:event_btnPaiementRecuActionPerformed
 
     private void btnCodeChambreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCodeChambreActionPerformed
@@ -1658,6 +1687,7 @@ public class IHM_Principale extends javax.swing.JFrame {
                             comboChambre.getSelectedItem().toString()), BDD);
             OngletChambreAjouter.setVisible(true);
             flagAffichageChambre = !flagAffichageChambre;
+            PasserEnLectureSeule("Chambres", true);
         } else {
             OngletChambreAjouter.setVisible(false);
             flagAffichageChambre = !flagAffichageChambre;

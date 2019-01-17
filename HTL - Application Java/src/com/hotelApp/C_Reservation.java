@@ -40,7 +40,16 @@ public class C_Reservation {
      */
     public C_Reservation()
     {
-        
+        setCodePorte(0);
+        setCommandePaye(false);
+        setIDClient(0);
+        setPrenom("");
+        setNom("");
+        setMail("");
+        setNumeroChambre(0);
+        setNumeroReservation(0);
+        setNbPersonnes(0);
+        setPrixRestantAPayer(0);
     }
     
     /**
@@ -67,8 +76,8 @@ public class C_Reservation {
                 setNumeroChambre(resultat.getInt(17));
                 setCodePorte(resultat.getInt(6));
                 setCommandePaye(resultat.getBoolean(9));
-                setNom(resultat.getString(13));
-                setPrenom(resultat.getString(14));
+                setNom(resultat.getString(14));
+                setPrenom(resultat.getString(15));
                 setDateArrivee(resultat.getDate(4));
                 setDateFin(resultat.getDate(5));
                 setNumeroReservation(resultat.getInt(1));
@@ -266,7 +275,8 @@ public class C_Reservation {
         try {
             Statement statement = handler.getConnection().createStatement();
             String requete = "UPDATE `t_reservation` "
-                    + "SET `commandePaye`='"+((CommandePaye) ? 0 : 1)+"' "
+                    + "SET `commandePaye`='"+((CommandePaye) ? 0 : 1)+"', "
+                    + "`prixPaye`=`prixTotal` "
                     + "WHERE `id_reservation`='"+NumeroReservation+"'";
             return statement.executeUpdate(requete);
         } catch (SQLException ex) {

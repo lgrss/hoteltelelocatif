@@ -25,8 +25,8 @@ public class IHM_Connexion extends javax.swing.JFrame {
      */
     
     /* Attributs */
-    String url = "jdbc:mysql://localhost:3306/hotel";
-    //String url = "jdbc:mysql://10.73.8.96:3306/hotel";
+    //String url = "jdbc:mysql://localhost:3306/hotel";
+    String url = "jdbc:mysql://10.73.8.69:3306/hotel";
     String user = "root";
     //String user = "phpmyadmin";
     String password = "";
