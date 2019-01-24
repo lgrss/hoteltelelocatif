@@ -1,5 +1,8 @@
+/*
+    TODO LIST :
+        - CORRIGER LE PROBLEME DE PRIVILEGE (AFFICHE TOUT LE TEMPS 0)
+ */
 package com.hotelApp;
-
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +16,6 @@ import javax.swing.JOptionPane;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Karl La Grassa
@@ -23,14 +25,15 @@ public class IHM_Connexion extends javax.swing.JFrame {
     /**
      * Creates new form IHM_Connexion
      */
-    
     /* Attributs */
     //String url = "jdbc:mysql://localhost:3306/hotel";
     String url = "jdbc:mysql://10.73.8.69:3306/hotel";
     String user = "root";
     //String user = "phpmyadmin";
     String password = "";
-    
+
+    int privilege;
+
     public IHM_Connexion() {
         initComponents();
     }
@@ -99,52 +102,50 @@ public class IHM_Connexion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public int getPrivilege() {
+        return privilege;
+    }
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         C_BDD BDD = new C_BDD(url, user, password);
-        
-        if (BDD.Connecter() == 0)
-        {
+
+        if (BDD.Connecter() == 0) {
             String requete = "SELECT COUNT(*) AS NB, `privilege` FROM "
-                    + "`t_personnel` WHERE `identifiant`= '"+idField.getText()
-                    + "' AND `mdp`='"+passwordField.getText()+"'";
+                    + "`t_personnel` WHERE `identifiant`= '" + idField.getText()
+                    + "' AND `mdp`='" + passwordField.getText() + "'";
             try {
                 Statement statement = BDD.getConnection().createStatement();
                 ResultSet resultat = statement.executeQuery(requete);
                 resultat.first();
-                
+
                 /* Vérification de la connection */
-                if (resultat.getString(2) == null)
-                {
+                if (resultat.getString(2) == null) {
                     JOptionPane.showMessageDialog(rootPane,
-                        "La combinaison mot de passe / identifiant est "
-                                + "incorrecte, veuillez réessayer.", 
-                        "Erreur d'identification"
-                    , JOptionPane.ERROR_MESSAGE);
-                }
-                else
-                {
+                            "La combinaison mot de passe / identifiant est "
+                            + "incorrecte, veuillez réessayer.",
+                            "Erreur d'identification", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    privilege = resultat.getInt(2);
                     /* Affichage de l'interface principale */
-                    new IHM_Principale().setVisible(true);
-                    
+                    IHM_Principale pp;
+                    pp = new IHM_Principale();
+                    pp.setPrivilege(privilege);
+                    pp.Afficher();
+                    //pp.setVisible(true);
                     /* On ferme la fenêtre de connexion */
                     this.setVisible(false);
                 }
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(IHM_Connexion.class.getName())
                         .log(Level.SEVERE, null, ex);
                 BDD.setErrno(ex.getMessage());
-                JOptionPane.showMessageDialog(rootPane, BDD.getErrno(), 
-                        "Erreur SQL"
-                    , JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane, BDD.getErrno(),
+                        "Erreur SQL", JOptionPane.ERROR_MESSAGE);
             }
-            
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(rootPane, BDD.getErrno(), "Erreur SQL"
-                    , JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, BDD.getErrno(), "Erreur SQL", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

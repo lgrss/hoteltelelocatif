@@ -627,12 +627,6 @@
                                           </Group>
                                       </Group>
                                   </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="lblCouchages" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="lblNbCouchages" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="359" max="-2" attributes="0"/>
-                                  </Group>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -694,12 +688,7 @@
                                   <Component id="txtLitsSimples" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
                                   <Component id="lblLitsSimples" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="32" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="lblCouchages" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblNbCouchages" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <EmptySpace pref="57" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="btnValiderChambre" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnAnnulerChambre" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -740,11 +729,6 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="txtLitsDoubles">
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="lblCouchages">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Couchages"/>
-                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="txtNumChambre">
                     </Component>
@@ -829,11 +813,6 @@
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
                       </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="lblNbCouchages">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="jLabel1"/>
-                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="lblModeChambre">
                       <Properties>
