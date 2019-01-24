@@ -57,12 +57,12 @@ TouchScreen ts(XP, YP, XM, YM, 300);
 EthernetClient client;
 
 // ARDUINO MAC ADDRESS : 90-A2-DA-11-1B-C0
-char mac[] = {'9', '0', 'A', '2', 'D', 'A', '1', '1', '1', 'B', 'C', '0', 0};
+//char mac[] = {'9', '0', 'A', '2', 'D', 'A', '1', '1', '1', 'B', 'C', '0', 0};
+char mac[] = {'4', '5', '7', 'A', 'B', 'C', '7', 'B', '5', 'A', 'A', '2', 0};
 
-//Arduino
-IPAddress ip(10, 73, 8, 120);
+//IPAddress ip(10, 73, 8, 120);
+IPAddress ip(10, 73, 8, 15);
 IPAddress passerelle(10, 73, 8, 112);
-//Serveur
 IPAddress serveur(10, 73, 8, 69);
 
 struct Case
@@ -76,8 +76,6 @@ struct Case
 Case numPad[12];
 
 int compteurDelay;
-int compteurTimeOut;
-int timeOutMax;
 boolean blocageEnCours;
 boolean erreur;
 String messageErreur;
@@ -102,13 +100,11 @@ void specialEntretien();
 void setup(void) {
   //Initialise les variables
   blocageEnCours = false;
-  timeOutMax = 10;
   erreur = false;
   nbErreur = 0;
   code = "_ _ _ _";
   messageErreur = "";
   compteurDelay = 0;
-  compteurTimeOut = 0;
   
   //Configure le port série
   Serial.begin(9600);
@@ -129,16 +125,15 @@ void setup(void) {
 void loop()
 {
   //Vérifie si le client est connecté
-  if (!client.connected() || compteurTimeOut >= timeOutMax) 
+  if (!client.connected()) 
   {
-    if (!client.connected()) afficherErreur("PROBLEME SERVEUR");
+    afficherErreur("PROBLEME SERVEUR");
     client.stop();
     while (!client.connected()) 
     {
       client.connect(serveur, 4242);
       specialEntretien();
     }
-    compteurTimeOut = 0;
     erreur = false;
   }
 
@@ -147,16 +142,12 @@ void loop()
   {
     //Demande l'état des erreurs
     envoyerRequete("E");
-    //Gère le Time Out en cas de cable déconnecté
-    compteurTimeOut++;
   
     delay(100);
   
     //ANALYSE LES DONNEES RECUES
     if (client.available()) 
     {
-      compteurTimeOut = 0;
-  
       int  reponse = client.read();     
   
       if (reponse == 68) {
@@ -191,11 +182,6 @@ void loop()
           envoyerRequete("B");
         }
       }
-    }
-  
-    //Time Out détecté
-    if (compteurTimeOut >= timeOutMax){
-      afficherErreur("    TIME OUT");
     }
 
     compteurDelay = 0;
@@ -376,7 +362,6 @@ String rechargerMDP()
 {
   int nbReponse = -1;
   String MDP  = "_ _ _ _";
-  compteurTimeOut = 0;
 
   //flush manuel
   while (client.available()) client.read();
@@ -393,16 +378,13 @@ String rechargerMDP()
     {
       //Demander le code
       envoyerRequete("C");
-      //augmente le compteur
-      compteurTimeOut++;
     }
 
     delay(100);
 
     //ANALYSE LES DONNEES RECUES
     if (client.available()) {
-      compteurTimeOut = 0;
-
+      
       int reponse = client.read();
 
       if (reponse == 67) {
@@ -433,10 +415,6 @@ String rechargerMDP()
           }
         }
       }
-    }
-
-    if (compteurTimeOut >= timeOutMax) {
-      afficherErreur("    TIME OUT");
     }
 
   }

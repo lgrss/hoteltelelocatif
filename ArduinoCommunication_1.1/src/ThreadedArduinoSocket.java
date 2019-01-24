@@ -5,48 +5,45 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 public class ThreadedArduinoSocket extends Thread
 {  private Socket socket = null;
    private ServerSocket server = null;
    
-   private int Port;
+   private int port;
    private BDD bdd;
-   private JPanel Panel;
-   private JLabel Label;
+   private JPanel panel;
+   private JLabel label;
+   private JTable table;
    
    
-   
-   public ThreadedArduinoSocket(int port, JPanel panel, JLabel label)
+   public ThreadedArduinoSocket(int newPort, JPanel newPanel, JLabel newLabel, JTable newTable)
    {  
-       Port = port;
+       port = newPort;
        bdd = new BDD("jdbc:mysql://localhost:3306/", "root", "");
-       Panel = panel;
-       Label = label;
+       panel = newPanel;
+       label = newLabel;
+       table = newTable;
    }
    
    public void run()
    {
-       int nbHost = 0;
-       try
-      {  System.out.println("Binding to port " + Port + ", please wait  ...");
-         server = new ServerSocket(Port);  
-         System.out.println("Server started: " + server);
-         System.out.println("Waiting for a client ..."); 
-         Panel.setBackground(Color.orange);
+       try{
+          server = new ServerSocket(port);  
+          panel.setBackground(Color.orange);
          
-          while (true) {
+          while (server.isBound()) {
             try {
                 socket = server.accept();
             } catch (IOException e) {
-                Panel.setBackground(Color.red);
+                panel.setBackground(Color.red);
             }
-            new ArduinoSocket(socket, bdd).start();
-            nbHost++;
-            Label.setText(String.valueOf(nbHost));
-            System.out.println("Client accepted: " + socket);
-            Panel.setBackground(Color.green);
+            
+            new ArduinoSocket(socket, bdd, label, table).start();
+            panel.setBackground(Color.green);
         }
+        close();
          
     } catch (IOException ex) {
          Logger.getLogger(ThreadedArduinoSocket.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,7 +53,8 @@ public class ThreadedArduinoSocket extends Thread
    public void close() throws IOException
    {  if (socket != null)    socket.close();
       if (server != null)    server.close();
-      Panel.setBackground(Color.red);
+      panel.setBackground(Color.red);
+      label.setText("0");
    }
   
 }

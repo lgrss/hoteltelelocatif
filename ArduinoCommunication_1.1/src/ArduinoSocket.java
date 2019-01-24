@@ -2,7 +2,12 @@ import java.net.*;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class ArduinoSocket extends Thread
 {
@@ -10,20 +15,32 @@ public class ArduinoSocket extends Thread
    private Socket socket = null;
    private BufferedInputStream in = null;
    private DataOutputStream out = null;
+   private JLabel label;
+   private JTable table;
    private String text;
+   private Object[] ligne;
+   private boolean firstMsg; 
+   private int nbRow;
    
-   public ArduinoSocket(Socket newSocket, BDD newBDD)
+   public ArduinoSocket(Socket newSocket, BDD newBDD, JLabel newLabel, JTable newTable)
    {  
        socket = newSocket;
        bdd = newBDD;
+       label = newLabel;
+       table = newTable;
+       ligne = new Object[4];
+       firstMsg = true;
+       nbRow = table.getRowCount();
+       
+       label.setText(String.valueOf(Integer.parseInt(label.getText()) + 1));
    }
    
    public void run()
    {
        try
       { 
-         open();         
-         while (socket.isBound())
+         open();
+         while (!socket.isClosed())
          {  
             int userText = in.read();
             char userChar = (char) userText;
@@ -37,9 +54,15 @@ public class ArduinoSocket extends Thread
                 }
                 mac = mac.substring(0, mac.length()-1);
                 
+                if(firstMsg)
+                {
+                    updateTable(mac);
+                    firstMsg = false;
+                }
+                
                 if (text.substring(0, 3).equals("#C:"))
                 {
-                    int code = CodeRequest(mac);
+                    int code = bdd.CodeRequest(mac);
                     
                     if (code == 1) out.write('P');
                     else if (code == -1) out.write('R');
@@ -51,7 +74,7 @@ public class ArduinoSocket extends Thread
                 }
                 else if (text.substring(0, 3).equals("#E:"))
                 {
-                    int etat = CheckRequest(mac);
+                    int etat = bdd.CheckRequest(mac);
                     
                     if (etat == 0) out.write('V');
                     else if (etat == 1) out.write('P');
@@ -62,126 +85,69 @@ public class ArduinoSocket extends Thread
                 }
                 else if (text.substring(0, 3).equals("#B:"))
                 {
-                    if (BlockRequest(mac) == -2) out.write('S');
+                    if (bdd.BlockRequest(mac) == -2) out.write('S');
                 }
             }
             else text += userChar;
          }
          close();
-         System.out.println("Connexion closed");
       }
       catch(IOException ioe)
-      {  System.out.println(ioe); 
+      {  
+        System.out.println(ioe); 
+        close();
       }
    }
+   
    public void open() throws IOException
    {  
       in = new BufferedInputStream(socket.getInputStream());
       out = new DataOutputStream(socket.getOutputStream());
    }
-   public void close() throws IOException
+   
+   public void close()
    {  
-      if (socket != null)    socket.close();
-      if (out != null) out.close();
-      if (in != null)  in.close();
-   }
-   private int CodeRequest(String mac)
-   {
-    try {
-        int etat = CheckRequest(mac);
-        if(etat != 0) return etat;
-        String request = "SELECT code FROM `t_reservation` WHERE id_chambre=" + RoomRequest(mac);
-        ResultSet resultat;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        resultat.next();
-        int code = resultat.getInt(1);
-        return code;
-    } catch (SQLException ex) {
-        System.out.println(ex);
-        return -2;
-    }
+      try {
+          if (out != null) out.close();
+          if (in != null)  in.close();
+      } catch (IOException ex) {
+          Logger.getLogger(ArduinoSocket.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
    
-   private int BlockRequest(String mac)
-   {
-    try {
-        String request = "UPDATE `t_reservation` SET `PorteBloque`=1 WHERE id_chambre=" + RoomRequest(mac);
-        return bdd.UpdateRequest("hotel", request);
-    } catch (SQLException ex) {
-        System.out.println(ex);
-        return -2;
-    }
-   }
-   
-   private int CheckRequest(String mac){
-    try {
-        ResultSet resultat;
-        
-        int idChambre = RoomRequest(mac);
-        
-        String request = "SELECT `porteBloque` FROM `t_reservation` WHERE id_chambre=" + idChambre;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        if(!resultat.next()) return -1;
-        int resultat1 = resultat.getInt(1);
-        if (resultat1 == 1) return 1;
-        
-        request = "SELECT `commandePaye` FROM `t_reservation` WHERE id_chambre=" + idChambre;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        if(!resultat.next()) return -1;
-        int resultat2 = resultat.getInt(1);
-        if (resultat2 == 0) return 2;
-        
-        int resultat3 = DateRequest(mac, idChambre);
-        if (resultat3 == 0) return 3;
-        
-        return 0;
-    } catch (SQLException ex) {
-        System.out.println(ex);
-        return -2;
-    }
-   }
-
-   private int DateRequest(String mac, int idChambre){
+   private void updateTable(String mac){
        try {
-        ResultSet resultat;
-        
-        String request = "SELECT `dateDebut` FROM `t_reservation` WHERE id_chambre=" + idChambre;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        if(!resultat.next()) return -1;
-        Date date1 = resultat.getDate(1);
-        
-        request = "SELECT `dateFin` FROM `t_reservation` WHERE id_chambre=" + idChambre;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        if(!resultat.next()) return -1;
-        Date date2 = resultat.getDate(1);
-        
-        Date date = new Date();
-        if(date1.before(date) && date2.after(date)) return 1;
-        else return 0;
-        
-    } catch (SQLException ex) {
-        System.out.println(ex);
-        return -2;
-    }
-   }
-   
-   private int RoomRequest(String mac)
-   {
-    try {
-        String request = "SELECT id_chambre FROM `t_chambre` WHERE addrMac = \"" + mac + "\"";
-        ResultSet resultat;
-        resultat = bdd.SelectRequest("hotel", request);
-        resultat.beforeFirst();
-        if(!resultat.next()) return -1;
-        return resultat.getInt(1);
-    } catch (SQLException ex) {
-        System.out.println(ex);
-        return -2;
-    }  
+            ResultSet resultat;
+            String requete;
+
+            requete = "SELECT id_hotel FROM `t_chambre` WHERE addrMac = \"" + mac + "\"";
+            resultat = bdd.SelectRequest("hotel", requete);
+            resultat.beforeFirst();
+            resultat.next();
+            int idHotel = resultat.getInt(1);
+
+            requete = "SELECT `nom` FROM `t_hotel` WHERE id_hotel=" + idHotel;
+            resultat = bdd.SelectRequest("hotel", requete);
+            resultat.beforeFirst();
+            resultat.next();
+            ligne[0] = resultat.getString(1);
+
+            requete = "SELECT numero FROM `t_chambre` WHERE addrMac = \"" + mac + "\"";
+            resultat = bdd.SelectRequest("hotel", requete);
+            resultat.beforeFirst();
+            resultat.next();
+            ligne[1] = resultat.getInt(1);
+
+            ligne[2] = mac;
+
+            ligne[3] = "connected";
+
+            DefaultTableModel md = (DefaultTableModel) table.getModel();
+            md.addRow(ligne);
+            table.setModel(md);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ArduinoSocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
    }
 }
